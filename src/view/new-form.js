@@ -1,6 +1,14 @@
 import { createElement } from '../render';
+import { humanizeTaskDueDate } from '../utils';
 
-function createNewFormTemplate() {
+function createNewFormTemplate(trip) {
+  const {destination, point, pointType} = trip;
+  const {basePrice, dateFrom, dateTo} = point;
+  const {name, description} = destination;
+
+  const dateFromHum = humanizeTaskDueDate(dateFrom);
+  const dateToHum = humanizeTaskDueDate(dateTo);
+
   return (
     `            <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -66,9 +74,9 @@ function createNewFormTemplate() {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Flight
+          ${pointType}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -78,10 +86,10 @@ function createNewFormTemplate() {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromHum}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateToHum}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -89,7 +97,7 @@ function createNewFormTemplate() {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -149,7 +157,7 @@ function createNewFormTemplate() {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+          <p class="event__destination-description">${description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
@@ -168,8 +176,12 @@ function createNewFormTemplate() {
 }
 
 export default class NewForm {
+  constructor({trip}) {
+    this.trip = trip;
+  }
+
   getTemplate() {
-    return createNewFormTemplate();
+    return createNewFormTemplate(this.trip);
   }
 
   getElement() {

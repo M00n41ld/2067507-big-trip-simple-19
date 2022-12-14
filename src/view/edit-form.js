@@ -1,6 +1,9 @@
 import { createElement } from '../render';
+// import { humanizeTaskDueDate } from '../utils';
 
 function createEditableTemplate() {
+  // const {destination} = trip;
+
   return (
 
     `<li class="trip-events__item">
@@ -162,6 +165,11 @@ function createEditableTemplate() {
 }
 
 export default class EditForm {
+
+  // constructor({trip}) {
+  //   this.trip = trip;
+  // }
+
   getTemplate() {
     return createEditableTemplate();
   }
