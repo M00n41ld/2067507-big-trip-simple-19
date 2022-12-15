@@ -27,8 +27,20 @@ function humanizeTaskDueTime(dueDate) {
   return dueDate ? dayjs(dueDate).format(DATE_FORMAT_TIME) : '';
 }
 
-function isOptionChecked(repeating) {
-  return Object.values(repeating).some(Boolean);
+function humanizeDate(date, formatData) {
+  return date ? dayjs(date).format(formatData) : '';
 }
 
-export {getRandomArrayElement, getRandomPositiveInteger, humanizeTaskDueDate, humanizeTaskDueTime, isOptionChecked};
+// function isOptionChecked(repeating) {
+//   return Object.values(repeating).some(Boolean);
+// }
+
+function makingOffersByType (items, typeOfOffer, checkedTrip) {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type === typeOfOffer) {
+      checkedTrip.offers = items[i].offers;
+    }
+  }
+  return checkedTrip;
+}
+export {makingOffersByType ,getRandomArrayElement, getRandomPositiveInteger, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};

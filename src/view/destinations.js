@@ -1,27 +1,30 @@
 import { createElement } from '../render';
-import { humanizeTaskDueTime } from '../utils';
+import { humanizeDate} from '../utils';
+
+const DATE_FORMAT_TIME = 'HH:mm';
+const DATE_FORMAT_DAY = 'DD MMM';
 
 function createDestinationTemplate(trip) {
-  // console.log(trip)
-  const {destination, point, pointType} = trip;
-  const {basePrice, dateFrom, dateTo} = point;
+  const {basePrice, dateFrom, dateTo, destination, type, offers} = trip;
   const {name} = destination;
-  // console.log(destination)
-  const dateFromHum = humanizeTaskDueTime(dateFrom);
-  const dateToHum = humanizeTaskDueTime(dateTo);
+
+  const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
+  const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
+  const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
+  // const dateToHum = humanizeDate(dateTo, DATE_FORMAT_DAY);
   return (
     `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">MAR 18</time>
+      <time class="event__date" datetime="2019-03-18">${dateFromHum}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${pointType}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${pointType} ${name}</h3>
+      <h3 class="event__title">${type} ${name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">${dateFromHum}</time>
+          <time class="event__start-time" datetime="2019-03-18T10:30">${timeFromHum}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">${dateToHum}</time>
+          <time class="event__end-time" datetime="2019-03-18T11:00">${timeToHum}</time>
         </p>
       </div>
       <p class="event__price">
@@ -64,3 +67,4 @@ export default class NewDestination {
     this.element = null;
   }
 }
+// console.log(NewDestination)
