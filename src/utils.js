@@ -43,4 +43,6 @@ function makingOffersByType (items, typeOfOffer, checkedTrip) {
   }
   return checkedTrip;
 }
+
+
 export {makingOffersByType ,getRandomArrayElement, getRandomPositiveInteger, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};

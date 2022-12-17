@@ -4,7 +4,7 @@ import BoardPresenter from './presenter/board-presenter';
 import './utils';
 import '../src/mock/task';
 import TripModel from './model/trips-model';
-import Offers from './view/offers';
+// import Offers from './view/offers';
 
 const filtersElement = document.querySelector('.trip-controls__filters');
 const mainElement = document.querySelector('.trip-events');

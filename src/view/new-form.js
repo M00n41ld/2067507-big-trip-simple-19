@@ -1,19 +1,19 @@
 import { createElement } from '../render';
-import { humanizeDate, MakingOffersByType } from '../utils';
-import { offersByType } from '../mock/task';
+import { humanizeDate } from '../utils';
+
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
-function createNewFormTemplate(trip) {
+function createNewFormTemplate(trip, allOffers) {
   const {basePrice, dateFrom, dateTo, destination, type} = trip;
   const {description, name, pictures} = destination;
   const {src} = pictures[0];
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
-  // MakingOffersByType(offersByType, type, trip);
-  const {offers} = trip;
-// console.log(offers)
+  const allOffersByType = allOffers.find((offer) => offer.type === type);
+
+  const { offers} = allOffersByType;
 
   return (
     `<li class="trip-events__item">
@@ -114,14 +114,14 @@ function createNewFormTemplate(trip) {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+          ${offers.map((offer) => (`<div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${offer.id}" type="checkbox" name="event-offer-luggage" ${trip.offers.includes(offer.id) ? 'checked' : ''}>
               <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
+                <span class="event__offer-title">${offer.title}</span>
                 &plus;&euro;&nbsp;
-                <span class="event__offer-price">30</span>
+                <span class="event__offer-price">${offer.price}</span>
               </label>
-            </div>
+            </div>`)).join('')}
           </div>
         </section>
 
@@ -146,12 +146,14 @@ function createNewFormTemplate(trip) {
 }
 
 export default class NewForm {
-  constructor({trip}) {
+  constructor({trip, allOffers}) {
     this.trip = trip;
+    this.allOffers = allOffers;
+    // this.offersByType = offersByType;
   }
 
   getTemplate() {
-    return createNewFormTemplate(this.trip);
+    return createNewFormTemplate(this.trip, this.allOffers);
   }
 
   getElement() {
