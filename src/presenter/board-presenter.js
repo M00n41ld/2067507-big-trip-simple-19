@@ -6,7 +6,6 @@ import { RenderPosition } from '../render';
 // import EditForm from '../view/edit-form';
 import NewForm from '../view/new-form';
 import { offersByType } from '../mock/task';
-import EditForm from '../view/edit-form';
 
 
 export default class BoardPresenter {
@@ -79,6 +78,7 @@ export default class BoardPresenter {
     render(tripComponent, this.#listComponent.element);
   }
 }
+
 
 //заглушку!
 //Кнопка загрузки дальнейшего списка, нужна ли нам?
