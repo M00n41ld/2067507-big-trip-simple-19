@@ -146,25 +146,29 @@ function createNewFormTemplate(trip, allOffers) {
 }
 
 export default class NewForm {
+
+  #element = null;
+  #trip = null;
+  #allOffers = null;
+
   constructor({trip, allOffers}) {
-    this.trip = trip;
-    this.allOffers = allOffers;
-    // this.offersByType = offersByType;
+    this.#trip = trip;
+    this.#allOffers = allOffers;
   }
 
-  getTemplate() {
-    return createNewFormTemplate(this.trip, this.allOffers);
+  get template() {
+    return createNewFormTemplate(this.#trip, this.#allOffers);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
