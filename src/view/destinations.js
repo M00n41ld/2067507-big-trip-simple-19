@@ -91,4 +91,4 @@ export default class NewDestination {
     this.#element = null;
   }
 }
-// console.log(NewDestination)
+

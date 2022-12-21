@@ -6,7 +6,7 @@ import { RenderPosition } from '../render';
 // import EditForm from '../view/edit-form';
 import NewForm from '../view/new-form';
 import { offersByType } from '../mock/task';
-
+import NoTrips from '../view/no-trip';
 
 export default class BoardPresenter {
 
@@ -27,13 +27,16 @@ export default class BoardPresenter {
   init() {
     this.#boardTrips = [...this.#tripModel.trip];
 
-    render(this.#listComponent, this.#listContainer);
-    render(new NewSorting(), this.#listComponent.element, RenderPosition.BEFOREBEGIN);
-    // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
-    // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
-
-    for (let i = 0; i < this.#boardTrips.length; i++) {
-      this.#renderTrip(this.#boardTrips[i], offersByType);
+    if (this.#boardTrips.length === 0) {
+      render(new NoTrips(), this.#listContainer);
+    } else {
+      render(this.#listComponent, this.#listContainer);
+      render(new NewSorting(), this.#listComponent.element, RenderPosition.BEFOREBEGIN);
+      // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
+      // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
+      for (let i = 0; i < this.#boardTrips.length; i++) {
+        this.#renderTrip(this.#boardTrips[i], offersByType);
+      }
     }
 
   }
