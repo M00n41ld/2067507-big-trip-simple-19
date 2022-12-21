@@ -1,12 +1,12 @@
 import { getRandomTrip } from '../mock/task';
 
-const TRIP_COUNT = 4;
+const TRIP_COUNT = 22;
 
 export default class TripModel {
-  trips = Array.from({length: TRIP_COUNT}, getRandomTrip);
+  #trips = Array.from({length: TRIP_COUNT}, getRandomTrip);
 
-  getTrip() {
-    return this.trips;
+  get trip() {
+    return this.#trips;
   }
 }
 
