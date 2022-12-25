@@ -1,5 +1,4 @@
-import { getRandomPositiveInteger } from '../utils';
-import { getRandomArrayElement } from '../utils';
+import { getRandomArrayElement, getRandomPositiveInteger } from '../utils/common';
 
 
 const newData = [

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate} from '../utils';
+import { humanizeDate} from '../utils/trip';
 
 const DATE_FORMAT_TIME = 'HH:mm';
 const DATE_FORMAT_DAY = 'DD MMM';

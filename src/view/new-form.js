@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { humanizeDate } from '../utils';
+import { humanizeDate } from '../utils/trip';
 
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
