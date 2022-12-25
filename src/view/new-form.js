@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils';
 
 
@@ -145,30 +145,28 @@ function createNewFormTemplate(trip, allOffers) {
   );
 }
 
-export default class NewForm {
-
-  #element = null;
+export default class NewForm extends AbstractView {
+  #handleFormSubmit = null;
   #trip = null;
   #allOffers = null;
 
-  constructor({trip, allOffers}) {
+
+  constructor({trip, allOffers, onFormSubmit}) {
+    super();
     this.#trip = trip;
     this.#allOffers = allOffers;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formSubmitHandler); //reset?
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
     return createNewFormTemplate(this.#trip, this.#allOffers);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

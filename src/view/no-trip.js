@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 function createNoTripsTemplate() {
   return (
@@ -6,22 +6,9 @@ function createNoTripsTemplate() {
   );
 }
 
-export default class NoTrips {
-  #element = null;
+export default class NoTrips extends AbstractView{
 
   get template() {
     return createNoTripsTemplate();
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

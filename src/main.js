@@ -1,5 +1,5 @@
 import NewFilters from './view/filters';
-import { render } from './render';
+import {render} from './framework/render.js';
 import BoardPresenter from './presenter/board-presenter';
 import './utils';
 import '../src/mock/task';

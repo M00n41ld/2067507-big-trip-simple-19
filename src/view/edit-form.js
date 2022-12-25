@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 // import { humanizeTaskDueDate } from '../utils';
 
 function createEditableTemplate() {
@@ -163,26 +163,9 @@ function createEditableTemplate() {
   </li>`
   );
 }
-
-export default class EditForm {
-  #element = null;
-  // constructor({trip}) {
-  //   this.trip = trip;
-  // }
-
+//Возможно понадобится конструкторб пока делаю без
+export default class EditForm extends AbstractView {
   get template() {
     return createEditableTemplate();
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
