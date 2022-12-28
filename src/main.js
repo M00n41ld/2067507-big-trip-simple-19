@@ -1,7 +1,8 @@
 import NewFilters from './view/filters';
-import { render } from './render';
+import {render} from './framework/render.js';
 import BoardPresenter from './presenter/board-presenter';
-import './utils';
+import '../src/utils/common';
+import '../src/utils/trip';
 import '../src/mock/task';
 import TripModel from './model/trips-model';
 // import Offers from './view/offers';

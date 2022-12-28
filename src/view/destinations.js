@@ -1,5 +1,5 @@
-import { createElement } from '../render';
-import { humanizeDate} from '../utils';
+import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeDate} from '../utils/trip';
 
 const DATE_FORMAT_TIME = 'HH:mm';
 const DATE_FORMAT_DAY = 'DD MMM';
@@ -64,14 +64,17 @@ function createDestinationTemplate(trip, allOffers) {
   );
 }
 
-export default class NewDestination {
-  #element = null;
+export default class NewDestination extends AbstractView{
   #trip = null;
   #allOffers = null;
+  #handleEditClick = null;
 
-  constructor({trip, allOffers}) {
+  constructor({trip, allOffers, onEditClick}) {
+    super();
     this.#trip = trip;
     this.#allOffers = allOffers;
+    this.#handleEditClick = onEditClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     // this.offersByType = offersByType;
   }
 
@@ -79,16 +82,9 @@ export default class NewDestination {
     return createDestinationTemplate(this.#trip, this.#allOffers);
   }
 
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
 
