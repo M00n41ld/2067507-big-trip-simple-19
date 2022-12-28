@@ -4,16 +4,14 @@ import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
-function createNewFormTemplate(trip, allOffers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = trip;
-  const {description, name, pictures} = destination;
-  const {src} = pictures[0];
+function createNewFormTemplate(trip) {
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType} = trip;
+  const {name, description, pictures} = destinationPoint;
+  // const {src} = pictures[0];
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-  const copyAllOffers = allOffers;
-  const allOffersByType = allOffers.find((offer) => offer.type === type);
 
-  const { offers} = allOffersByType;
+  const { offers} = offerByType;
 
   return (
     `<li class="trip-events__item">
@@ -30,7 +28,7 @@ function createNewFormTemplate(trip, allOffers) {
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
-              ${copyAllOffers.map((offer) => (`<div class="event__type-item">
+              ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
             </div>`)).join('')}
@@ -91,11 +89,7 @@ function createNewFormTemplate(trip, allOffers) {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
+            ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
             </div>
           </div>
         </section>
@@ -108,20 +102,20 @@ function createNewFormTemplate(trip, allOffers) {
 export default class NewForm extends AbstractView {
   #handleFormSubmit = null;
   #trip = null;
-  #allOffers = null;
+  // #allOffers = null;
 
 
-  constructor({trip, allOffers, onFormSubmit}) {
+  constructor({trip, onFormSubmit}) {
     super();
     this.#trip = trip;
-    this.#allOffers = allOffers;
+    // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
 
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
-    return createNewFormTemplate(this.#trip, this.#allOffers);
+    return createNewFormTemplate(this.#trip);
   }
 
   #formSubmitHandler = (evt) => {

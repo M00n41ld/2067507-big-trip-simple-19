@@ -73,18 +73,17 @@ export default class BoardPresenter {
   #renderBoard() {
     if (this.#boardTrips.length === 0) {
       render(new NoTrips(), this.#listContainer);
-    } else {
-      render(this.#listComponent, this.#listContainer);
-      render(new NewSorting(), this.#listComponent.element, RenderPosition.BEFOREBEGIN);
-      // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
-      // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
-      for (let i = 0; i < this.#boardTrips.length; i++) {
-        this.#renderTrip(this.#boardTrips[i], offersByType);
-      }
+      return;
     }
+    render(this.#listComponent, this.#listContainer);
+    render(new NewSorting(), this.#listComponent.element, RenderPosition.BEFOREBEGIN);
+    // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
+    // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
+    for (let i = 0; i < this.#boardTrips.length; i++) {
+      this.#renderTrip(this.#boardTrips[i], offersByType);
+    }
+
   }
 }
 
 
-//заглушку!
-//Кнопка загрузки дальнейшего списка, нужна ли нам?

@@ -2,18 +2,13 @@ import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
-function createEditableTemplate(trip, allOffers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = trip;
-  const {description, name, pictures} = destination;
-  const {src} = pictures[0];
+function createEditableTemplate(trip) {
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType} = trip;
+  const {name, description, pictures} = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-  const copyAllOffers = allOffers;
 
-  const allOffersByType = allOffers.find((offer) => offer.type === type);
-
-  const { offers} = allOffersByType;
-
+  const { offers} = offerByType;
   return (
 
     `<li class="trip-events__item">
@@ -29,7 +24,7 @@ function createEditableTemplate(trip, allOffers) {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${copyAllOffers.map((offer) => (`<div class="event__type-item">
+              ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
             </div>`)).join('')}
@@ -42,7 +37,7 @@ function createEditableTemplate(trip, allOffers) {
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${trip.id}" type="text" name="${name}" value="${name}" list="destination-list-${trip.id}">
-          <datalist id="destination-list-${destination.id}">
+          <datalist id="destination-list-${destinationPoint.id}">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
             <option value="Chamonix"></option>
@@ -90,6 +85,12 @@ function createEditableTemplate(trip, allOffers) {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+            ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
+            </div>
+          </div>
         </section>
       </section>
     </form>
@@ -100,13 +101,13 @@ function createEditableTemplate(trip, allOffers) {
 export default class EditForm extends AbstractView {
   #handleFormSubmit = null;
   #trip = null;
-  #allOffers = null;
+  // #allOffers = null;
   #handleEditCloseClick = null;
 
-  constructor({trip, allOffers, onFormSubmit, onEditCloseClick}) {
+  constructor({trip, onFormSubmit, onEditCloseClick}) {
     super();
     this.#trip = trip;
-    this.#allOffers = allOffers;
+    // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
 
@@ -115,7 +116,7 @@ export default class EditForm extends AbstractView {
   }
 
   get template() {
-    return createEditableTemplate(this.#trip, this.#allOffers);
+    return createEditableTemplate(this.#trip);
   }
 
   #formSubmitHandler = (evt) => {
