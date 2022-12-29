@@ -9,6 +9,7 @@ function createEditableTemplate(trip) {
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
   const { offers} = offerByType;
+
   return (
 
     `<li class="trip-events__item">
@@ -25,18 +26,18 @@ function createEditableTemplate(trip) {
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
               ${offersByType.map((offer) => (`<div class="event__type-item">
-              <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
+              <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
             </div>`)).join('')}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-${trip.id}">
+          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${trip.id}" type="text" name="${name}" value="${name}" list="destination-list-${trip.id}">
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}">
           <datalist id="destination-list-${destinationPoint.id}">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>

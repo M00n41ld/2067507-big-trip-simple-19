@@ -18,30 +18,30 @@ function createNewFormTemplate(trip) {
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
-          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <label class="event__type  event__type-btn" for="event-type-toggle-${trip.id}">
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${trip.id}" type="checkbox">
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
               ${offersByType.map((offer) => (`<div class="event__type-item">
-              <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
+              <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
             </div>`)).join('')}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
+          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
           ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
-          <datalist id="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="event-destination" value="${name}" list="destination-list-${destinationPoint.id}">
+          <datalist id="destination-list-${destinationPoint.id}">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
             <option value="Chamonix"></option>
@@ -49,19 +49,19 @@ function createNewFormTemplate(trip) {
         </div>
 
         <div class="event__field-group  event__field-group--time">
-          <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromHum}">
+          <label class="visually-hidden" for="event-start-time-${trip.id}">From</label>
+          <input class="event__input  event__input--time" id="event-start-time-${trip.id}" type="text" name="event-start-time" value="${dateFromHum}">
           &mdash;
-          <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateToHum}">
+          <label class="visually-hidden" for="event-end-time-${trip.id}">To</label>
+          <input class="event__input  event__input--time" id="event-end-time-${trip.id}" type="text" name="event-end-time" value="${dateToHum}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
-          <label class="event__label" for="event-price-1">
+          <label class="event__label" for="event-price-${trip.id}">
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
