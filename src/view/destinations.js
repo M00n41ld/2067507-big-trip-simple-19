@@ -4,6 +4,8 @@ import { humanizeDate} from '../utils/trip';
 const DATE_FORMAT_TIME = 'HH:mm';
 const DATE_FORMAT_DAY = 'DD MMM';
 
+const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
+
 function createDestinationTemplate(trip, allOffers) {
   const {basePrice, dateFrom, dateTo, destination, type} = trip;
   const {name} = destination;
@@ -11,7 +13,8 @@ function createDestinationTemplate(trip, allOffers) {
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
   const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
-
+  const fullDateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
+  const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
   const allOffersByType = allOffers.find((offer) => offer.type === type);
   const { offers} = allOffersByType;
 
@@ -33,16 +36,16 @@ function createDestinationTemplate(trip, allOffers) {
   return (
     `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" datetime="2019-03-18">${dateFromHum}</time>
+      <time class="event__date" datetime="${fullDateFromHum}">${dateFromHum}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${type} ${name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">${timeFromHum}</time>
+          <time class="event__start-time" datetime="${fullDateFromHum}">${timeFromHum}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">${timeToHum}</time>
+          <time class="event__end-time" datetime="${fullDateToHum}">${timeToHum}</time>
         </p>
       </div>
       <p class="event__price">
@@ -74,7 +77,7 @@ export default class NewDestination extends AbstractView{
     this.#trip = trip;
     this.#allOffers = allOffers;
     this.#handleEditClick = onEditClick;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler());
     // this.offersByType = offersByType;
   }
 
@@ -82,9 +85,10 @@ export default class NewDestination extends AbstractView{
     return createDestinationTemplate(this.#trip, this.#allOffers);
   }
 
-  #editClickHandler = (evt) => {
-    evt.preventDefault();
+  #editClickHandler = () => {
+    // evt.preventDefault();
     this.#handleEditClick();
   };
+
 }
 
