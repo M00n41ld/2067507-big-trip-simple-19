@@ -127,7 +127,7 @@ export default class EditForm extends AbstractView {
   };
 
   #formSubmitHandler = (evt) => {
-    console.log('click');
+    // console.log('click');
     evt.preventDefault();
     this.#handleFormSubmit(this.#trip);
   };

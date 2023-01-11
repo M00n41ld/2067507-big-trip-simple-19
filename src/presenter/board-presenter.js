@@ -39,7 +39,8 @@ export default class BoardPresenter {
   #renderTrip(trip) {
     const tripPresenter = new TripPresenter({
       tripListContainer: this.#listComponent.element,
-      onDataChange: this.#handleTripChange
+      onDataChange: this.#handleTripChange,
+      onModeChange: this.#handleModeChange
     });
     //Что это вообще такое
     // console.log(this.#handleTripChange);
@@ -56,6 +57,10 @@ export default class BoardPresenter {
   #renderNoTrips() {
     render(this.#noTripsComponent, this.#listContainer);
   }
+
+  #handleModeChange = () => {
+    this.#tripPresenters.forEach((presenter) => { presenter.resetView();});
+  };
 
   #handleTripChange = (updatedTrip) => {
     this.#boardTrips = updateItem(this.#boardTrips, updatedTrip);
