@@ -13,6 +13,7 @@ export default class TripModel {
     return this.#trips.map((trip) => {
       const destinationPoint = this.#pointsList.find((point) => point.id === trip.id);
       const offerByType = this.#allOffersByType.find((offer) => offer.type === trip.type);
+
       const checkedOffers = [];
       function showChecked () {
         for (let i = 0; i < trip.offers.length; i++) {
@@ -31,7 +32,8 @@ export default class TripModel {
         offerByType,
         offersByType,
         destinationPoint,
-        checkedOffers
+        checkedOffers,
+        destinationsList
       };
     });
   }

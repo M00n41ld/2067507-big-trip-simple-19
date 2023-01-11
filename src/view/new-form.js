@@ -5,7 +5,7 @@ import { humanizeDate } from '../utils/trip';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
 function createNewFormTemplate(trip) {
-  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType} = trip;
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
   const {name, description, pictures} = destinationPoint;
   // const {src} = pictures[0];
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
@@ -42,9 +42,7 @@ function createNewFormTemplate(trip) {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="event-destination" value="${name}" list="destination-list-${destinationPoint.id}">
           <datalist id="destination-list-${destinationPoint.id}">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
         </div>
 

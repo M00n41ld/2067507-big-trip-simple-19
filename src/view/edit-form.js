@@ -3,7 +3,7 @@ import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
-  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType} = trip;
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
   const {name, description, pictures} = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
@@ -39,9 +39,7 @@ function createEditableTemplate(trip) {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}">
           <datalist id="destination-list-${destinationPoint.id}">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
         </div>
 
@@ -104,14 +102,17 @@ export default class EditForm extends AbstractView {
   #trip = null;
   // #allOffers = null;
   #handleEditCloseClick = null;
+  #handleCheckedClick = null;
 
-  constructor({trip, onFormSubmit, onEditCloseClick}) {
+  constructor({trip, onFormSubmit, onEditCloseClick, onCheckboxClick}) {
     super();
     this.#trip = trip;
     // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
-
+    this.#handleCheckedClick = onCheckboxClick;
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
   }
@@ -120,9 +121,15 @@ export default class EditForm extends AbstractView {
     return createEditableTemplate(this.#trip);
   }
 
+  #addCheckedHandler = (evt) => {
+    const test = evt.target.closest('.event__offer-selector');
+    this.#handleCheckedClick(test);
+  };
+
   #formSubmitHandler = (evt) => {
+    console.log('click');
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#trip);
   };
 
   #editCloseHandler = () => {
