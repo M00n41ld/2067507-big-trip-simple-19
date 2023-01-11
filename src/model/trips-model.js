@@ -11,7 +11,7 @@ export default class TripModel {
 
   get trip() {
     return this.#trips.map((trip) => {
-      const destinationPoint = this.#pointsList.find((point) => point.id === trip.id);
+      const destinationPoint = this.#pointsList.find((point) => point.id === trip.destination);
       const offerByType = this.#allOffersByType.find((offer) => offer.type === trip.type);
 
       const checkedOffers = [];

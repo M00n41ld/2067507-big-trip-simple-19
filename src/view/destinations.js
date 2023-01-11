@@ -15,7 +15,7 @@ function createDestinationTemplate(trip) {
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
   const fullDateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
-// console.log(trip.checkedOffers)
+
   return (
     `<li class="trip-events__item">
     <div class="event">

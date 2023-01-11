@@ -34,7 +34,7 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      onCheckboxClick: this.#handleCheckedClick,
+      // onCheckboxClick: this.#handleCheckedClick,
     });
 
     this.#tripComponent = new NewDestination({
@@ -65,8 +65,6 @@ export default class TripPresenter {
   }
 
   resetView() {
-    console.log(this.#mode)
-
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceFormToCard();
     }
@@ -94,20 +92,16 @@ export default class TripPresenter {
     }
   };
 
-  #handleCheckedClick = (test) => {
-    // console.log(this.#handleCheckedClick)
-    // console.log(test.querySelector('input').checked);
-    if (test.querySelector('input').checked) {
-      const fullId = test.querySelector('input').id;
-      const idCropped = fullId.slice(fullId.length - 1);
-      console.log(this.#trip.offerByType.offers[idCropped - 1]);
-      console.log(idCropped);
-      this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
-      console.log(this.#trip.checkedOffers);
-      this.#handleDataChange({...this.#trip});
-      console.log({...this.#trip});
-    }
-  };
+  // #handleCheckedClick = (test) => {
+  //   // console.log(this.#handleCheckedClick)
+  //   // console.log(test.querySelector('input').checked);
+  //   if (test.querySelector('input').checked) {
+  //     const fullId = test.querySelector('input').id;
+  //     const idCropped = fullId.slice(fullId.length - 1);
+  //     this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
+  //     this.#handleDataChange({...this.#trip});
+  //   }
+  // };
 
   #handleEditClick = () => {
     this.#replaceCardToForm();

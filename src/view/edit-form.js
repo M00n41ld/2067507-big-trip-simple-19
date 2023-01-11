@@ -102,16 +102,16 @@ export default class EditForm extends AbstractView {
   #trip = null;
   // #allOffers = null;
   #handleEditCloseClick = null;
-  #handleCheckedClick = null;
+  // #handleCheckedClick = null;
 
-  constructor({trip, onFormSubmit, onEditCloseClick, onCheckboxClick}) {
+  constructor({trip, onFormSubmit, onEditCloseClick}) {
     super();
     this.#trip = trip;
     // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
-    this.#handleCheckedClick = onCheckboxClick;
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    // this.#handleCheckedClick = onCheckboxClick;
+    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
     // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
@@ -121,10 +121,10 @@ export default class EditForm extends AbstractView {
     return createEditableTemplate(this.#trip);
   }
 
-  #addCheckedHandler = (evt) => {
-    const test = evt.target.closest('.event__offer-selector');
-    this.#handleCheckedClick(test);
-  };
+  // #addCheckedHandler = (evt) => {
+  //   const test = evt.target.closest('.event__offer-selector');
+  //   this.#handleCheckedClick(test);
+  // };
 
   #formSubmitHandler = (evt) => {
     // console.log('click');

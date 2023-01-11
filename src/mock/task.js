@@ -1,5 +1,5 @@
 import { getRandomArrayElement, getRandomPositiveInteger } from '../utils/common';
-
+import { nanoid } from 'nanoid';
 
 const newData = [
   {
@@ -7,7 +7,6 @@ const newData = [
     'dateFrom': '2017-07-10T22:55:56.845Z',
     'dateTo': '2018-07-11T11:22:13.375Z',
     'destination': 1,
-    'id': 1,
     'offers': [1, 3],
     'type': 'taxi'
   },
@@ -16,7 +15,6 @@ const newData = [
     'dateFrom': '2017-07-10T22:55:56.845Z',
     'dateTo': '2018-07-11T11:22:13.375Z',
     'destination': 2,
-    'id': 2,
     'offers': [1],
     'type': 'bus'
   },
@@ -25,7 +23,6 @@ const newData = [
     'dateFrom': '2017-07-10T22:55:56.845Z',
     'dateTo': '2018-07-11T11:22:13.375Z',
     'destination': 3,
-    'id': 3,
     'offers': [1, 2],
     'type': 'train'
   },
@@ -34,7 +31,6 @@ const newData = [
     'dateFrom': '2017-07-10T22:55:56.845Z',
     'dateTo': '2018-07-11T11:22:13.375Z',
     'destination': 4,
-    'id': 4,
     'offers': [3],
     'type': 'ship'
   },
@@ -43,7 +39,6 @@ const newData = [
     'dateFrom': '2017-07-12T14:43:56.845Z',
     'dateTo': '2018-07-11T19:25:13.375Z',
     'destination': 5,
-    'id': 5,
     'offers': [2],
     'type': 'drive'
   },
@@ -52,7 +47,6 @@ const newData = [
     'dateFrom': '2023-07-09T20:55:56.845Z',
     'dateTo': '2023-07-11T08:55:13.375Z',
     'destination': 6,
-    'id': 6,
     'offers': [1, 3],
     'type': 'flight'
   },
@@ -61,7 +55,6 @@ const newData = [
     'dateFrom': '2016-07-10T22:55:56.845Z',
     'dateTo': '2016-07-11T09:12:34.375Z',
     'destination': 7,
-    'id': 7,
     'offers': [2],
     'type': 'check-in'
   },
@@ -70,7 +63,6 @@ const newData = [
     'dateFrom': '2023-06-09T12:30:56.845Z',
     'dateTo': '2023-07-11T10:21:13.375Z',
     'destination': 8,
-    'id': 8,
     'offers': [2,3],
     'type': 'sightseeing'
   },
@@ -79,7 +71,6 @@ const newData = [
     'dateFrom': '2024-07-10T22:55:56.845Z',
     'dateTo': '2024-07-13T11:23:15.375Z',
     'destination': 9,
-    'id': 9,
     'offers': [1, 2],
     'type': 'restaurant'
   },
@@ -411,7 +402,10 @@ const offersByType = [
 
 function getRandomTrip() {
 
-  return getRandomArrayElement(newData);
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(newData)
+  };
 }
 
 export {getRandomTrip, offersByType, destinationsList};
