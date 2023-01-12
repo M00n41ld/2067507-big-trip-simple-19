@@ -24,5 +24,30 @@ function makingOffersByType (items, typeOfOffer, checkedTrip) {
   return checkedTrip;
 }
 
+// function getWeightForNullDate(A, B) {
+//   if (A === null && B === null) {
+//     return 0;
+//   }
 
-export {makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};
+//   if (A === null) {
+//     return 1;
+//   }
+
+//   if (B === null) {
+//     return -1;
+//   }
+
+//   return null;
+// }
+
+
+function sortPriceDown (A, B) {
+  // const weight = getWeightForNullDate(A.basePrice, B.basePrice);
+  // console.log(A.basePrice, B.basePrice)
+  return B.basePrice - A.basePrice;
+  // if (A - B) {
+
+  // }
+  // console.log(A)
+}
+export {sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};
