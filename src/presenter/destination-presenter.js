@@ -26,7 +26,6 @@ export default class TripPresenter {
 
   init(trip) {
     this.#trip = trip;
-
     const prevTripComponent = this.#tripComponent;
     const prevTripEditComponent = this.#editTripComponent;
 

@@ -44,10 +44,38 @@ function makingOffersByType (items, typeOfOffer, checkedTrip) {
 function sortPriceDown (A, B) {
   // const weight = getWeightForNullDate(A.basePrice, B.basePrice);
   // console.log(A.basePrice, B.basePrice)
+  console.log('sortPriceDown');
+  //ПОчему при первом вызовем совершается 68 вызовов
   return B.basePrice - A.basePrice;
   // if (A - B) {
 
   // }
   // console.log(A)
 }
-export {sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};
+
+function getWeightForNullDate(dateA, dateB) {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+}
+
+function sortDayUp (A, B) {
+  console.log('sortDayUp');
+  const weight = getWeightForNullDate(A.dateFrom, B.dateFrom);
+
+  return weight ?? dayjs(A.dateFrom).diff(dayjs(B.dateFrom));
+
+}
+
+
+export {sortDayUp ,sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};

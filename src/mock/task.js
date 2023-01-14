@@ -4,15 +4,15 @@ import { nanoid } from 'nanoid';
 const newData = [
   {
     'basePrice': 190,
-    'dateFrom': '2017-07-10T22:55:56.845Z',
-    'dateTo': '2018-07-11T11:22:13.375Z',
+    'dateFrom': '2017-08-10T22:55:56.845Z',
+    'dateTo': '2018-08-11T11:22:13.375Z',
     'destination': 1,
     'offers': [1, 3],
     'type': 'taxi'
   },
   {
     'basePrice': 490,
-    'dateFrom': '2017-07-10T22:55:56.845Z',
+    'dateFrom': '2018-07-10T22:55:56.845Z',
     'dateTo': '2018-07-11T11:22:13.375Z',
     'destination': 2,
     'offers': [1],
@@ -20,16 +20,16 @@ const newData = [
   },
   {
     'basePrice': 1000,
-    'dateFrom': '2017-07-10T22:55:56.845Z',
-    'dateTo': '2018-07-11T11:22:13.375Z',
+    'dateFrom': '2017-09-10T22:55:56.845Z',
+    'dateTo': '2018-09-11T11:22:13.375Z',
     'destination': 3,
     'offers': [1, 2],
     'type': 'train'
   },
   {
     'basePrice': 1540,
-    'dateFrom': '2017-07-10T22:55:56.845Z',
-    'dateTo': '2018-07-11T11:22:13.375Z',
+    'dateFrom': '2017-05-10T22:55:56.845Z',
+    'dateTo': '2018-05-11T11:22:13.375Z',
     'destination': 4,
     'offers': [3],
     'type': 'ship'
@@ -51,7 +51,7 @@ const newData = [
     'type': 'flight'
   },
   {
-    'basePrice': 9990,
+    'basePrice': 990,
     'dateFrom': '2016-07-10T22:55:56.845Z',
     'dateTo': '2016-07-11T09:12:34.375Z',
     'destination': 7,

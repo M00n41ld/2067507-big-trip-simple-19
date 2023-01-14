@@ -1,4 +1,4 @@
-import {render} from '../framework/render.js';
+import {render, remove} from '../framework/render.js';
 import TripPresenter from './destination-presenter.js';
 import NewSorting from '../view/sorting';
 import { updateItem } from '../utils/common.js';
@@ -8,7 +8,7 @@ import { RenderPosition } from '../framework/render.js';
 import { offersByType } from '../mock/task';
 import NoTrips from '../view/no-trip';
 import { SortType } from '../const.js';
-import { sortPriceDown } from '../utils/trip.js';
+import { sortPriceDown, sortDayUp } from '../utils/trip.js';
 
 export default class BoardPresenter {
 
@@ -35,10 +35,14 @@ export default class BoardPresenter {
 
   init() {
     this.#boardTrips = [...this.#tripModel.trip];
-
+    this.#boardTrips.sort(sortPriceDown);
+    this.#boardTrips.sort(sortDayUp);
+    this.#renderSortingPlate();
     this.#renderBoard();
-    this.#sourcedBoardTrips = [...this.#tripModel.trip];
+    // this.#sourcedBoardTrips = this.#boardTrips.sort(sortDayUp);
 
+
+console.log(this.#sourcedBoardTrips)
   }
 
   #renderTrip(trip) {
@@ -58,6 +62,8 @@ export default class BoardPresenter {
   #clearTripList() {
     this.#tripPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPresenters.clear();
+    //самодеятельность
+    // remove(this.#sortingComponent);
   }
 
   #renderNoTrips() {
@@ -77,17 +83,20 @@ export default class BoardPresenter {
   #sortTrips(sortType) {
     switch (sortType) {
       case SortType.PRICE:
-        // console.log(this.#boardTrips);
         this.#boardTrips.sort(sortPriceDown);
-        // console.log(this.#boardTrips);
+        //вызов 70 раз это норм?
+        console.log(this.#boardTrips);
         break;
-      case SortType.DAY:
-        // this.#boardTrips.sort(sortPriceDown);
-        break;
+      // case SortType.DAY:
+      //   this.#boardTrips = this.#sourcedBoardTrips;
+      //   console.log(this.#boardTrips)
+      //   break;
       default:
-        this.#boardTrips = [...this.#sourcedBoardTrips];
+        this.#boardTrips.sort(sortDayUp);
+        console.log(this.#boardTrips)
     }
     this.#currentSortType = sortType;
+    console.log( this.#currentSortType )
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -107,7 +116,13 @@ export default class BoardPresenter {
     this.#sortingComponent = new NewSorting({
       onSortTypeChange: this.#handleSortTypeChange
     });
+    //Самодеятельность перенести сортинг в отдельный вызов и перенести отрисоку контейнера в сортинг
+    render(this.#listComponent, this.#listContainer);
     render(this.#sortingComponent, this.#listComponent.element, RenderPosition.BEFOREBEGIN);
+  }
+
+  #renderSortingPlate() {
+    this.#renderSorting();
   }
 
   #renderBoard() {
@@ -115,13 +130,12 @@ export default class BoardPresenter {
       this.#renderNoTrips();
       return;
     }
-    render(this.#listComponent, this.#listContainer);
+    // render(this.#listComponent, this.#listContainer);
     // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
     // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
     for (let i = 0; i < this.#boardTrips.length; i++) {
       this.#renderTrip(this.#boardTrips[i], offersByType);
     }
-    this.#renderSorting();
   }
 }
 
