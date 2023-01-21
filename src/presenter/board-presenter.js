@@ -40,15 +40,14 @@ export default class BoardPresenter {
     this.#renderSortingPlate();
     this.#renderBoard();
     // this.#sourcedBoardTrips = this.#boardTrips.sort(sortDayUp);
+    // console.log(this.#sourcedBoardTrips)
 
-
-console.log(this.#sourcedBoardTrips)
   }
 
   #renderTrip(trip) {
     const tripPresenter = new TripPresenter({
       tripListContainer: this.#listComponent.element,
-      // onDataChange: this.#handleTripChange,
+      onDataChange: this.#handleTripChange,
       onModeChange: this.#handleModeChange
     });
     //Что это вообще такое
@@ -78,6 +77,7 @@ console.log(this.#sourcedBoardTrips)
     this.#boardTrips = updateItem(this.#boardTrips, updatedTrip);
     this.#sourcedBoardTrips = updateItem(this.#sourcedBoardTrips, updatedTrip);
     this.#tripPresenters.get(updatedTrip.id).init(updatedTrip);
+    console.log(this.#boardTrips)
   };
 
   #sortTrips(sortType) {
@@ -85,7 +85,6 @@ console.log(this.#sourcedBoardTrips)
       case SortType.PRICE:
         this.#boardTrips.sort(sortPriceDown);
         //вызов 70 раз это норм?
-        console.log(this.#boardTrips);
         break;
       // case SortType.DAY:
       //   this.#boardTrips = this.#sourcedBoardTrips;
@@ -93,10 +92,10 @@ console.log(this.#sourcedBoardTrips)
       //   break;
       default:
         this.#boardTrips.sort(sortDayUp);
-        console.log(this.#boardTrips)
+
     }
     this.#currentSortType = sortType;
-    console.log( this.#currentSortType )
+
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -108,7 +107,7 @@ console.log(this.#sourcedBoardTrips)
     this.#sortTrips(sortType);
     this.#clearTripList();
     this.#renderBoard();
-    // console.log(this.#renderTrip())
+
 
   };
 

@@ -33,15 +33,14 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      // onCheckboxClick: this.#handleCheckedClick,
+      onCheckboxClick: this.#handleCheckedClick,
     });
 
     this.#tripComponent = new NewDestination({
       trip: this.#trip,
       onEditClick: this.#handleEditClick,
     });
-    //непонятно как это работает
-    // render(this.#tripComponent, this.#tripListContainer);
+
     if (prevTripComponent === null || prevTripEditComponent === null) {
       render(this.#tripComponent, this.#tripListContainer);
       return;
@@ -74,14 +73,12 @@ export default class TripPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
-    console.log(this.#mode)
   }
 
   #replaceFormToCard() {
     replace(this.#tripComponent, this.#editTripComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
-    // console.log(this.#mode)
   }
 
   #escKeyDownHandler = (evt) => {
@@ -91,16 +88,32 @@ export default class TripPresenter {
     }
   };
 
-  // #handleCheckedClick = (test) => {
-  //   // console.log(this.#handleCheckedClick)
-  //   // console.log(test.querySelector('input').checked);
-  //   if (test.querySelector('input').checked) {
-  //     const fullId = test.querySelector('input').id;
-  //     const idCropped = fullId.slice(fullId.length - 1);
-  //     this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
-  //     this.#handleDataChange({...this.#trip});
-  //   }
-  // };
+  #handleCheckedClick = (test) => {
+    const fullId = test.querySelector('input').id;
+    const idCropped = fullId.slice(fullId.length - 1);
+    if (test.querySelector('input').checked) {
+      console.log('есть checked')
+      console.log(test.querySelector('input').checked)
+      this.#trip.offers.push(this.#trip.offerByType.offers[idCropped - 1].id);
+      this.#handleDataChange({...this.#trip});
+    }
+else {
+
+  console.log(test.querySelector('input').checked)
+
+  console.log(test.querySelector('input'))
+  console.log(idCropped)
+  const findOption = this.#trip.offerByType.offers.find((element) => element.id === Number(idCropped))
+  const rest = this.#trip.offers.indexOf(findOption)
+console.log(rest)
+// console.log(this.#trip)
+  this.#trip.offers.splice(rest)
+  console.log(this.#trip)
+  this.#handleDataChange({...this.#trip});
+}
+
+  };
+
 
   #handleEditClick = () => {
     this.#replaceCardToForm();
@@ -111,7 +124,6 @@ export default class TripPresenter {
   };
 
   #handleFormSubmit = (trip) => {
-    // console.log(this.#handleDataChange)
     this.#handleDataChange(trip);
     this.#replaceFormToCard();
   };

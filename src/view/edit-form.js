@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
@@ -7,6 +7,7 @@ function createEditableTemplate(trip) {
   const {name, description, pictures} = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
+// console.log('trip.offers', trip.offers)
 
   const { offers} = offerByType;
 
@@ -97,42 +98,66 @@ function createEditableTemplate(trip) {
   );
 }
 
-export default class EditForm extends AbstractView {
+export default class EditForm extends AbstractStatefulView {
   #handleFormSubmit = null;
-  #trip = null;
+
   // #allOffers = null;
   #handleEditCloseClick = null;
-  // #handleCheckedClick = null;
+  #handleCheckedClick = null;
 
-  constructor({trip, onFormSubmit, onEditCloseClick}) {
+  constructor({trip, onFormSubmit, onEditCloseClick, onCheckboxClick}) {
     super();
-    this.#trip = trip;
+    this._setState(EditForm.parseTripToState(trip));
     // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
-    // this.#handleCheckedClick = onCheckboxClick;
-    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    this.#handleCheckedClick = onCheckboxClick;
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
     // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
   }
 
   get template() {
-    return createEditableTemplate(this.#trip);
+    return createEditableTemplate(this._state);
   }
 
-  // #addCheckedHandler = (evt) => {
-  //   const test = evt.target.closest('.event__offer-selector');
-  //   this.#handleCheckedClick(test);
-  // };
+  #addCheckedHandler = (evt) => {
+    const test = evt.target.closest('.event__offer-selector');
+    this.#handleCheckedClick(test);
+
+  };
+
 
   #formSubmitHandler = (evt) => {
-    // console.log('click');
     evt.preventDefault();
-    this.#handleFormSubmit(this.#trip);
+    this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
   };
 
   #editCloseHandler = () => {
     this.#handleEditCloseClick();
   };
+
+  static parseTripToState (trip) {
+    return {
+      ...trip
+    };
+  }
+
+  static parseStateToTrip (state) {
+    const trip = {...state};
+    return trip;
+  }
+
+
+  // #handleCheckedClick = (test) => {
+  //   // console.log(this.#handleCheckedClick)
+  //   // console.log(test.querySelector('input').checked);
+  //   if (test.querySelector('input').checked) {
+  //     const fullId = test.querySelector('input').id;
+  //     const idCropped = fullId.slice(fullId.length - 1);
+  //     this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
+  //     this.#handleDataChange({...this.#trip});
+  //   }
+  // };
 }

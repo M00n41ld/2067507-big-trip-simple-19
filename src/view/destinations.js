@@ -7,7 +7,7 @@ const DATE_FORMAT_DAY = 'DD MMM';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
 function createDestinationTemplate(trip) {
-  const {basePrice, dateFrom, dateTo, type, destinationPoint, checkedOffers} = trip;
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType} = trip;
   const {name} = destinationPoint;
 
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
@@ -15,6 +15,19 @@ function createDestinationTemplate(trip) {
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
   const fullDateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
+
+  const checkedOffers = [];
+  function showChecked () {
+    for (let i = 0; i < trip.offers.length; i++) {
+      for (let j = 0; j < offerByType.offers.length; j++) {
+        if (trip.offers[i] === offerByType.offers[j].id) {
+          checkedOffers.push(offerByType.offers[j]);
+        }
+      }
+    }
+    return checkedOffers;
+  }
+  showChecked();
 
   return (
     `<li class="trip-events__item">
