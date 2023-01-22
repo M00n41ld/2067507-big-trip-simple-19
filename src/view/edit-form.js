@@ -1,13 +1,15 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+
 import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
+
   const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
   const {name, description, pictures} = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-// console.log('trip.offers', trip.offers)
+
 
   const { offers} = offerByType;
 
@@ -108,19 +110,56 @@ export default class EditForm extends AbstractStatefulView {
   constructor({trip, onFormSubmit, onEditCloseClick, onCheckboxClick}) {
     super();
     this._setState(EditForm.parseTripToState(trip));
+
     // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
     this.#handleCheckedClick = onCheckboxClick;
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
     // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
+
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeDestinationHandler);
   }
 
   get template() {
     return createEditableTemplate(this._state);
   }
+
+  #changeTypeHandler = (evt) => {
+    const value = evt.target.closest('.event__type-input').value;
+    this._state.type = value;
+    const newOfferByType = this._state.offersByType.find((offer) => offer.type === value);
+
+    this.updateElement({
+      type: value,
+      offerByType: newOfferByType
+    });
+  };
+
+  #changeDestinationHandler = (evt) => {
+    const value = evt.target.value;
+    console.log(value)
+    console.log(this._state.destinationsList)
+    const newDestination = this._state.destinationsList.find((point) => point.name === value);
+    console.log(newDestination)
+    // const idCropped = idValue.slice(idValue.length - 1);
+    // console.log(idCropped)
+    // this._state.type = value;
+    // const newOfferByType = offersByType.find((offer) => offer.type === value);
+
+    this.updateElement({
+      destination: newDestination.id,
+      destinationPoint: newDestination
+    });
+    console.log(this._state)
+  };
 
   #addCheckedHandler = (evt) => {
     const test = evt.target.closest('.event__offer-selector');
@@ -149,15 +188,4 @@ export default class EditForm extends AbstractStatefulView {
     return trip;
   }
 
-
-  // #handleCheckedClick = (test) => {
-  //   // console.log(this.#handleCheckedClick)
-  //   // console.log(test.querySelector('input').checked);
-  //   if (test.querySelector('input').checked) {
-  //     const fullId = test.querySelector('input').id;
-  //     const idCropped = fullId.slice(fullId.length - 1);
-  //     this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
-  //     this.#handleDataChange({...this.#trip});
-  //   }
-  // };
 }

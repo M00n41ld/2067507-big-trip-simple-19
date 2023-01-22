@@ -92,25 +92,18 @@ export default class TripPresenter {
     const fullId = test.querySelector('input').id;
     const idCropped = fullId.slice(fullId.length - 1);
     if (test.querySelector('input').checked) {
-      console.log('есть checked')
-      console.log(test.querySelector('input').checked)
       this.#trip.offers.push(this.#trip.offerByType.offers[idCropped - 1].id);
       this.#handleDataChange({...this.#trip});
     }
-else {
+    else {
 
-  console.log(test.querySelector('input').checked)
+      const findOption = this.#trip.offerByType.offers.find((element) => element.id === Number(idCropped));
+      const rest = this.#trip.offers.indexOf(findOption);
 
-  console.log(test.querySelector('input'))
-  console.log(idCropped)
-  const findOption = this.#trip.offerByType.offers.find((element) => element.id === Number(idCropped))
-  const rest = this.#trip.offers.indexOf(findOption)
-console.log(rest)
-// console.log(this.#trip)
-  this.#trip.offers.splice(rest)
-  console.log(this.#trip)
-  this.#handleDataChange({...this.#trip});
-}
+      this.#trip.offers.splice(rest);
+
+      this.#handleDataChange({...this.#trip});
+    }
 
   };
 
