@@ -77,19 +77,15 @@ export default class BoardPresenter {
     this.#boardTrips = updateItem(this.#boardTrips, updatedTrip);
     this.#sourcedBoardTrips = updateItem(this.#sourcedBoardTrips, updatedTrip);
     this.#tripPresenters.get(updatedTrip.id).init(updatedTrip);
-    console.log(this.#boardTrips)
   };
 
   #sortTrips(sortType) {
     switch (sortType) {
       case SortType.PRICE:
         this.#boardTrips.sort(sortPriceDown);
-        //вызов 70 раз это норм?
+
         break;
-      // case SortType.DAY:
-      //   this.#boardTrips = this.#sourcedBoardTrips;
-      //   console.log(this.#boardTrips)
-      //   break;
+
       default:
         this.#boardTrips.sort(sortDayUp);
 

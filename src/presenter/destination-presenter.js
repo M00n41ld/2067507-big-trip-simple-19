@@ -33,7 +33,7 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      onCheckboxClick: this.#handleCheckedClick,
+      onDataChangeEdit: this.#handleDataChange,
     });
 
     this.#tripComponent = new NewDestination({
@@ -64,6 +64,7 @@ export default class TripPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editTripComponent.reset(this.#trip)
       this.#replaceFormToCard();
     }
   }
@@ -84,27 +85,10 @@ export default class TripPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#editTripComponent.reset(this.#trip);
       this.#replaceFormToCard();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
-  };
-
-  #handleCheckedClick = (test) => {
-    const fullId = test.querySelector('input').id;
-    const idCropped = fullId.slice(fullId.length - 1);
-    if (test.querySelector('input').checked) {
-      this.#trip.offers.push(this.#trip.offerByType.offers[idCropped - 1].id);
-      this.#handleDataChange({...this.#trip});
-    }
-    else {
-
-      const findOption = this.#trip.offerByType.offers.find((element) => element.id === Number(idCropped));
-      const rest = this.#trip.offers.indexOf(findOption);
-
-      this.#trip.offers.splice(rest);
-
-      this.#handleDataChange({...this.#trip});
-    }
-
   };
 
 
@@ -113,12 +97,15 @@ export default class TripPresenter {
   };
 
   #handleEditCloseClick = () => {
+    this.#editTripComponent.reset(this.#trip);
     this.#replaceFormToCard();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFormSubmit = (trip) => {
     this.#handleDataChange(trip);
     this.#replaceFormToCard();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 }
 
