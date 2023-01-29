@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-
+import { FilterType } from '../const';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 const DATE_FORMAT_TIME = 'HH:mm';
 
@@ -15,7 +15,7 @@ function humanizeDate(date, formatData) {
   return date ? dayjs(date).format(formatData) : '';
 }
 
-function makingOffersByType (items, typeOfOffer, checkedTrip) {
+function makingOffersByType(items, typeOfOffer, checkedTrip) {
   for (let i = 0; i < items.length; i++) {
     if (items[i].type === typeOfOffer) {
       checkedTrip.offers = items[i].offers;
@@ -24,33 +24,8 @@ function makingOffersByType (items, typeOfOffer, checkedTrip) {
   return checkedTrip;
 }
 
-// function getWeightForNullDate(A, B) {
-//   if (A === null && B === null) {
-//     return 0;
-//   }
-
-//   if (A === null) {
-//     return 1;
-//   }
-
-//   if (B === null) {
-//     return -1;
-//   }
-
-//   return null;
-// }
-
-
-function sortPriceDown (A, B) {
-  // const weight = getWeightForNullDate(A.basePrice, B.basePrice);
-  // console.log(A.basePrice, B.basePrice)
-  console.log('sortPriceDown');
-  //ПОчему при первом вызовем совершается 68 вызовов
+function sortPriceDown(A, B) {
   return B.basePrice - A.basePrice;
-  // if (A - B) {
-
-  // }
-  // console.log(A)
 }
 
 function getWeightForNullDate(dateA, dateB) {
@@ -65,17 +40,24 @@ function getWeightForNullDate(dateA, dateB) {
   if (dateB === null) {
     return -1;
   }
-
   return null;
 }
 
-function sortDayUp (A, B) {
-  console.log('sortDayUp');
+function sortDayUp(A, B) {
   const weight = getWeightForNullDate(A.dateFrom, B.dateFrom);
-
   return weight ?? dayjs(A.dateFrom).diff(dayjs(B.dateFrom));
-
 }
 
+function isInPast(element) {
+  const now = Date.now();
+  const date = new Date(element.dateTo);
+  const timestampInMs = date.getTime();
+  return timestampInMs <= now;
+}
 
-export {sortDayUp ,sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate};
+const filter = {
+  [FilterType.EVERYTHING]: (trips) => trips.filter((trip) => trip),
+  [FilterType.FUTURE]: (trips) => trips.filter((trip) => !isInPast(trip)),
+};
+
+export { filter, sortDayUp, sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate };

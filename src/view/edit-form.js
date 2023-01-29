@@ -2,7 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import { humanizeDate } from '../utils/trip';
 import 'flatpickr/dist/flatpickr.min.css';
-import { debounce } from '../utils/common';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
@@ -11,7 +10,7 @@ function createEditableTemplate(trip) {
   const { name, description, pictures } = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-  console.log(trip);
+
 
   const { offers } = offerByType;
 
@@ -108,12 +107,12 @@ export default class EditForm extends AbstractStatefulView {
   #datepickerEnd = null;
   #handleDataChange = null;
   #handleEditCloseClick = null;
-  // #handleCheckedClick = null;
+  #handleDeleteClick = null;
 
-  constructor({ trip, onFormSubmit, onEditCloseClick, onDataChangeEdit }) {
+  constructor({ trip, onFormSubmit, onEditCloseClick, onDataChangeEdit, onDeleteClick }) {
     super();
     this._setState(EditForm.parseTripToState(trip));
-
+    this.#handleDeleteClick = onDeleteClick;
     this.#handleDataChange = onDataChangeEdit;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
@@ -130,6 +129,7 @@ export default class EditForm extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
     // console.log( this.element.querySelector('.event__available-offers'))
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
 
@@ -169,7 +169,6 @@ export default class EditForm extends AbstractStatefulView {
     this.updateElement({
       dateTo: userDate,
     });
-
   };
 
   #setDatePickerFrom() {
@@ -182,7 +181,6 @@ export default class EditForm extends AbstractStatefulView {
         onClose: this.#dateChangeHandlerFrom,
       },);
   }
-
 
   #setDatePickerTo() {
     this.#datepickerEnd = flatpickr(this.element.querySelector('[name=event-end-time]'),
@@ -199,35 +197,45 @@ export default class EditForm extends AbstractStatefulView {
     const value = evt.target.closest('.event__type-input').value;
     this._state.type = value;
     const newOfferByType = this._state.offersByType.find((offer) => offer.type === value);
-
     this.updateElement({
       type: value,
       offerByType: newOfferByType,
       offers: []
     });
+
   };
 
   #changeDestinationHandler = (evt) => {
     const value = evt.target.value;
     const newDestination = this._state.destinationsList.find((point) => point.name === value);
-
+    if (newDestination === undefined) {
+      return;
+    }
     this.updateElement({
       destination: newDestination.id,
       destinationPoint: newDestination
     });
-
   };
 
   #addCheckedHandler = (evt) => {
     const test = evt.target.closest('.event__offer-selector');
     this.#handleCheckedClick(test);
-
   };
 
+  #formDeleteHandler = (evt) => {
+    console.log('click')
+    evt.preventDefault();
+    this.#handleDeleteClick(EditForm.parseStateToTrip(this._state));
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
+    const value = evt.target.value;
+    const isRealPoint = this._state.destinationsList.every((point) => point.name === value);
+    // if (isRealPoint) {
+      this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
+    // }
+
   };
 
   #editCloseHandler = () => {
@@ -245,16 +253,15 @@ export default class EditForm extends AbstractStatefulView {
     return trip;
   }
 
-
   #handleCheckedClick = (test) => {
     const fullId = test.querySelector('input').id;
     const idCropped = fullId.slice(fullId.length - 1);
     if (test.querySelector('input').checked) {
       this._state.offers.push(this._state.offerByType.offers[idCropped - 1].id);
       this._state.offers.sort((a, b) => a - b);
-     this.updateElement({
-      ...this._state
-    });
+      this.updateElement({
+        ...this._state
+      });
     }
     else {
       const newOffers = this._state.offers.filter((element) => element !== Number(idCropped));

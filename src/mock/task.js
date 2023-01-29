@@ -5,7 +5,7 @@ const newData = [
   {
     'basePrice': 190,
     'dateFrom': '2017-08-10T22:55:56.845Z',
-    'dateTo': '2018-08-11T11:22:13.375Z',
+    'dateTo': '2024-08-11T11:22:13.375Z',
     'destination': 1,
     'offers': [1, 3],
     'type': 'taxi'
@@ -13,7 +13,7 @@ const newData = [
   {
     'basePrice': 490,
     'dateFrom': '2018-07-10T22:55:56.845Z',
-    'dateTo': '2018-07-11T11:22:13.375Z',
+    'dateTo': '2024-07-11T11:22:13.375Z',
     'destination': 2,
     'offers': [1],
     'type': 'bus'

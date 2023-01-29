@@ -1,117 +1,142 @@
-import {render, remove} from '../framework/render.js';
+import { remove, render } from '../framework/render.js';
 import TripPresenter from './destination-presenter.js';
 import NewSorting from '../view/sorting';
-import { updateItem } from '../utils/common.js';
+
 import NewList from '../view/destinations-list';
 import { RenderPosition } from '../framework/render.js';
-// import NewForm from '../view/new-form';
+;
 import { offersByType } from '../mock/task';
 import NoTrips from '../view/no-trip';
-import { SortType } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPriceDown, sortDayUp } from '../utils/trip.js';
+import { filter } from '../utils/trip.js';
+
 
 export default class BoardPresenter {
 
   #listContainer = null;
   #tripModel = null;
-
   #listComponent = new NewList();
-
-  #boardTrips = [];
   #tripPresenters = new Map();
-
-  #noTripsComponent = new NoTrips();
+  #noTripsComponent = null;
   #sortingComponent = null;
-
   #currentSortType = SortType.DAY;
-  #sourcedBoardTrips = [];
+  #filterModel = null;
+  #filterType = FilterType.EVERYTHING;
 
-  constructor({listContainer, tripModel}) {
+  constructor({ listContainer, tripModel, filterModel }) {
     this.#listContainer = listContainer;
     this.#tripModel = tripModel;
+    this.#tripModel.addObserver(this.#handleModelEvent);
+    this.#filterModel = filterModel;
+
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
   }
 
+  get trips() {
+    this.#filterType = this.#filterModel.filter;
+    const trips = this.#tripModel.trip;
+    const filteredTrip = filter[this.#filterType](trips);
+    switch (this.#currentSortType) {
+      case SortType.PRICE:
+        return filteredTrip.sort(sortPriceDown);
+      case SortType.DAY:
+        return filteredTrip.sort(sortDayUp);
+
+    }
+    return filteredTrip;
+  }
 
   init() {
-    this.#boardTrips = [...this.#tripModel.trip];
-    this.#boardTrips.sort(sortPriceDown);
-    this.#boardTrips.sort(sortDayUp);
     this.#renderSortingPlate();
     this.#renderBoard();
-    // this.#sourcedBoardTrips = this.#boardTrips.sort(sortDayUp);
-    // console.log(this.#sourcedBoardTrips)
 
   }
 
   #renderTrip(trip) {
     const tripPresenter = new TripPresenter({
       tripListContainer: this.#listComponent.element,
-      onDataChange: this.#handleTripChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
-    //Что это вообще такое
-    // console.log(this.#handleTripChange);
+
     tripPresenter.init(trip);
     this.#tripPresenters.set(trip.id, tripPresenter);
-
-    // console.log(this.#tripPresenters);
-  }
-
-  #clearTripList() {
-    this.#tripPresenters.forEach((presenter) => presenter.destroy());
-    this.#tripPresenters.clear();
-    //самодеятельность
-    // remove(this.#sortingComponent);
   }
 
   #renderNoTrips() {
+    this.#noTripsComponent = new NoTrips({
+      filterType: this.#filterType
+    });
     render(this.#noTripsComponent, this.#listContainer);
   }
 
   #handleModeChange = () => {
-    this.#tripPresenters.forEach((presenter) => { presenter.resetView();});
+    this.#tripPresenters.forEach((presenter) => { presenter.resetView(); });
   };
 
-  #handleTripChange = (updatedTrip) => {
-    this.#boardTrips = updateItem(this.#boardTrips, updatedTrip);
-    this.#sourcedBoardTrips = updateItem(this.#sourcedBoardTrips, updatedTrip);
-    this.#tripPresenters.get(updatedTrip.id).init(updatedTrip);
-  };
-
-  #sortTrips(sortType) {
-    switch (sortType) {
-      case SortType.PRICE:
-        this.#boardTrips.sort(sortPriceDown);
-
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#tripPresenters.get(data.id).init(data);
         break;
-
-      default:
-        this.#boardTrips.sort(sortDayUp);
-
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({ resetSortType: true, resetFilterType: true });
+        this.#renderBoard();
+        break;
     }
-    this.#currentSortType = sortType;
+  };
 
+  #clearBoard({ resetSortType = false, resetFilterType = false } = {}) {
+    this.#tripPresenters.forEach((presenter) => presenter.destroy());
+    this.#tripPresenters.clear();
+    // remove(this.#noTripsComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+
+    if (this.#noTripsComponent) {
+      remove(this.#noTripsComponent);
+    }
+
+    if (resetFilterType) {
+      this.#filterType = FilterType.EVERYTHING;
+    }
   }
 
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_TASK:
+        this.#tripModel.updateTrip(updateType, update);
+        break;
+      case UserAction.ADD_TASK:
+        this.#tripModel.addTrip(updateType, update);
+        break;
+      case UserAction.DELETE_TASK:
+        this.#tripModel.deleteTrip(updateType, update);
+        break;
+    }
+  };
+
   #handleSortTypeChange = (sortType) => {
-    // console.log(sortType);
-    // console.log(this.#currentSortType);
     if (this.#currentSortType === sortType) {
       return;
     }
-    this.#sortTrips(sortType);
-    this.#clearTripList();
+    this.#currentSortType = sortType;
+    this.#clearBoard();
     this.#renderBoard();
-
-
   };
 
   #renderSorting() {
     this.#sortingComponent = new NewSorting({
       onSortTypeChange: this.#handleSortTypeChange
     });
-    //Самодеятельность перенести сортинг в отдельный вызов и перенести отрисоку контейнера в сортинг
     render(this.#listComponent, this.#listContainer);
     render(this.#sortingComponent, this.#listComponent.element, RenderPosition.BEFOREBEGIN);
   }
@@ -121,15 +146,16 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
-    if (this.#boardTrips.length === 0) {
+    render(this.#listComponent, this.#listContainer);
+    if (this.trips.length === 0) {
       this.#renderNoTrips();
       return;
     }
     // render(this.#listComponent, this.#listContainer);
     // render(new EditForm(), this.listComponent.element, RenderPosition.AFTERBEGIN);
     // render(new NewForm({trip: this.#boardTrips[0], allOffers: offersByType}), this.#listComponent.element, RenderPosition.BEFOREEND);
-    for (let i = 0; i < this.#boardTrips.length; i++) {
-      this.#renderTrip(this.#boardTrips[i], offersByType);
+    for (let i = 0; i < this.trips.length; i++) {
+      this.#renderTrip(this.trips[i], offersByType);
     }
   }
 }
