@@ -20,7 +20,8 @@ export default class TripModel extends Observable {
         offerByType,
         offersByType,
         destinationPoint,
-        destinationsList
+        destinationsList,
+
       };
 
     });

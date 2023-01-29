@@ -1,7 +1,6 @@
 import { render, remove, replace } from '../framework/render';
 import NewFilters from '../view/filters';
-import { FilterType, UpdateType } from '../const';
-
+import { UpdateType } from '../const';
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -18,21 +17,6 @@ export default class FilterPresenter {
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
-
-  //   get filters() {
-  //     // const trip = this.#tripModel.trips;
-  // // console.log( this.#tripModel)
-  //     return [
-  //       {
-  //         type: FilterType.EVERYTHING,
-  //         name: 'everything',
-  //       },
-  //       {
-  //         type: FilterType.FUTURE,
-  //         name: 'future',
-  //       },
-  //     ];
-  //   }
 
   get trips() {
     const trips = this.#tripModel.trip;

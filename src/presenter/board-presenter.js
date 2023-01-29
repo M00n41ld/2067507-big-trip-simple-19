@@ -4,13 +4,13 @@ import NewSorting from '../view/sorting';
 
 import NewList from '../view/destinations-list';
 import { RenderPosition } from '../framework/render.js';
-;
 import { offersByType } from '../mock/task';
 import NoTrips from '../view/no-trip';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPriceDown, sortDayUp } from '../utils/trip.js';
 import { filter } from '../utils/trip.js';
-
+import NewTripPresenter from './newTrip-presenter.js';
+import EditForm from '../view/edit-form.js';
 
 export default class BoardPresenter {
 
@@ -23,12 +23,19 @@ export default class BoardPresenter {
   #currentSortType = SortType.DAY;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
+  #newTripPresenter = null;
 
-  constructor({ listContainer, tripModel, filterModel }) {
+  constructor({ listContainer, tripModel, filterModel, onNewTripDestroy }) {
     this.#listContainer = listContainer;
     this.#tripModel = tripModel;
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel = filterModel;
+    this.#newTripPresenter = new NewTripPresenter({
+      tripListContainer: this.#listComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewTripDestroy,
+      trip: this.#tripModel.trip
+    });
 
     this.#filterModel.addObserver(this.#handleModelEvent);
 
@@ -54,6 +61,12 @@ export default class BoardPresenter {
 
   }
 
+  createTrip() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newTripPresenter.init();
+  }
+
   #renderTrip(trip) {
     const tripPresenter = new TripPresenter({
       tripListContainer: this.#listComponent.element,
@@ -73,6 +86,7 @@ export default class BoardPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newTripPresenter.destroy();
     this.#tripPresenters.forEach((presenter) => { presenter.resetView(); });
   };
 
@@ -93,6 +107,7 @@ export default class BoardPresenter {
   };
 
   #clearBoard({ resetSortType = false, resetFilterType = false } = {}) {
+    this.#newTripPresenter.destroy();
     this.#tripPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPresenters.clear();
     // remove(this.#noTripsComponent);
@@ -105,6 +120,7 @@ export default class BoardPresenter {
       remove(this.#noTripsComponent);
     }
 
+    //что дает
     if (resetFilterType) {
       this.#filterType = FilterType.EVERYTHING;
     }
@@ -147,6 +163,7 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#listComponent, this.#listContainer);
+
     if (this.trips.length === 0) {
       this.#renderNoTrips();
       return;

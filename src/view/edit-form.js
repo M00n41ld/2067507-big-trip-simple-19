@@ -223,18 +223,17 @@ export default class EditForm extends AbstractStatefulView {
   };
 
   #formDeleteHandler = (evt) => {
-    console.log('click')
     evt.preventDefault();
     this.#handleDeleteClick(EditForm.parseStateToTrip(this._state));
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const value = evt.target.value;
-    const isRealPoint = this._state.destinationsList.every((point) => point.name === value);
-    // if (isRealPoint) {
-      this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
-    // }
+    // const value = evt.target.value;
+    // const isRealPoint = this._state.destinationsList.every((point) => point.name === value);
+
+    this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
+
 
   };
 
