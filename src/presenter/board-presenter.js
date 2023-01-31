@@ -1,7 +1,6 @@
 import { remove, render } from '../framework/render.js';
 import TripPresenter from './destination-presenter.js';
 import NewSorting from '../view/sorting';
-
 import NewList from '../view/destinations-list';
 import { RenderPosition } from '../framework/render.js';
 import { offersByType } from '../mock/task';
@@ -10,7 +9,7 @@ import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPriceDown, sortDayUp } from '../utils/trip.js';
 import { filter } from '../utils/trip.js';
 import NewTripPresenter from './newTrip-presenter.js';
-import EditForm from '../view/edit-form.js';
+
 
 export default class BoardPresenter {
 
@@ -114,6 +113,8 @@ export default class BoardPresenter {
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
+      this.#clearSorting();
+      this.#renderSorting();
     }
 
     if (this.#noTripsComponent) {
@@ -124,6 +125,10 @@ export default class BoardPresenter {
     if (resetFilterType) {
       this.#filterType = FilterType.EVERYTHING;
     }
+  }
+
+  #clearSorting() {
+    remove(this.#sortingComponent);
   }
 
   #handleViewAction = (actionType, updateType, update) => {

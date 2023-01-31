@@ -3,7 +3,7 @@ import { offersByType } from '../mock/task';
 import { destinationsList } from '../mock/task';
 import Observable from '../framework/observable.js';
 
-const TRIP_COUNT = 5;
+const TRIP_COUNT = 2;
 
 export default class TripModel extends Observable {
   #trips = Array.from({ length: TRIP_COUNT }, getRandomTrip);

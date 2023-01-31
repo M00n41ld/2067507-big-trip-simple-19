@@ -1,21 +1,15 @@
-import AbstractView from '../framework/view/abstract-view.js';
-
-function createNewTaskButtonTemplate() {
-
-  return ('<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>');
-}
-
-export default class NewTripButton extends AbstractView {
+export default class NewTripButton {
   #handleClick = null;
+  #element = null;
 
   constructor({ onClick }) {
-    super();
     this.#handleClick = onClick;
-    this.element.addEventListener('click', this.#clickHandler);
+    this.#element = document.querySelector('.trip-main__event-add-btn');
+    this.#element.addEventListener('click', this.#clickHandler);
   }
 
-  get template() {
-    return createNewTaskButtonTemplate();
+  get element() {
+    return this.#element;
   }
 
   #clickHandler = (evt) => {

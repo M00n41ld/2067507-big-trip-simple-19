@@ -1,5 +1,4 @@
 import { remove, render, RenderPosition } from '../framework/render';
-import EditForm from '../view/edit-form';
 import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const';
 import NewForm from '../view/new-form';
@@ -25,7 +24,7 @@ export default class NewTripPresenter {
   }
 
   init() {
-    const trip = this.#trip;
+    // const trip = this.#trip;
     if (this.#tripEditComponent !== null) {
       return;
     }
@@ -33,10 +32,9 @@ export default class NewTripPresenter {
     this.#tripEditComponent = new NewForm({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
-      trip
     });
 
-    render(this.#tripEditComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN)
+    render(this.#tripEditComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }

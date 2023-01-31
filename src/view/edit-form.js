@@ -31,7 +31,7 @@ function createEditableTemplate(trip) {
               <legend class="visually-hidden">Event type</legend>
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type.slice(0,1).toUpperCase().concat(offer.type.slice(1))}</label>
             </div>`)).join('')}
             </fieldset>
           </div>
@@ -116,7 +116,6 @@ export default class EditForm extends AbstractStatefulView {
     this.#handleDataChange = onDataChangeEdit;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
-    // this.#handleCheckedClick = onCheckboxClick;
     this._restoreHandlers();
   }
 
@@ -128,11 +127,10 @@ export default class EditForm extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
-    // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
-
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#changeTypeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeDestinationHandler);
     this.#setDatePickerFrom();
@@ -157,6 +155,16 @@ export default class EditForm extends AbstractStatefulView {
     }
   }
 
+  #priceHandler = (evt) => {
+    const prevPrice = this._state.basePrice;
+    if (evt.target.value.match(/^\d+$/)) {
+      this._state.basePrice = evt.target.value;
+      this._setState(this._state.basePrice);
+    }
+    else {
+      evt.target.value = prevPrice;
+    }
+  };
 
   #dateChangeHandlerFrom = ([userDate]) => {
     this.updateElement({
@@ -188,6 +196,7 @@ export default class EditForm extends AbstractStatefulView {
         dateFormat: 'd/m/Y H:i',
         enableTime: true,
         time_24hr: true,
+        minDate: this._state.dateFrom,
         defaultDate: this._state.dateTo,
         onClose: this.#dateChangeHandlerTo,
       },);
@@ -229,9 +238,6 @@ export default class EditForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    // const value = evt.target.value;
-    // const isRealPoint = this._state.destinationsList.every((point) => point.name === value);
-
     this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
 
 

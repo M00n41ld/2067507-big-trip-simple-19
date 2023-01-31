@@ -32,7 +32,7 @@ function handleNewTripButtonClick() {
   boardPresenter.createTrip();
   newTripButtonComponent.element.disabled = true;
 }
-render(newTripButtonComponent, filtersElement);
+// render(newTripButtonComponent, filtersElement);
 
 filterPresenter.init();
 boardPresenter.init();
