@@ -65,16 +65,13 @@ function createDestinationTemplate(trip) {
 
 export default class NewDestination extends AbstractView{
   #trip = null;
-  // #allOffers = null;
   #handleEditClick = null;
 
   constructor({trip, onEditClick}) {
     super();
     this.#trip = trip;
-    // this.#allOffers = allOffers;
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
-    // this.offersByType = offersByType;
   }
 
   get template() {

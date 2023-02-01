@@ -1,5 +1,4 @@
 import { remove, render, RenderPosition } from '../framework/render';
-import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const';
 import NewForm from '../view/new-form';
 
@@ -53,7 +52,8 @@ export default class NewTripPresenter {
     this.#handleDataChange(
       UserAction.ADD_TASK,
       UpdateType.MINOR,
-      { id: nanoid(), ...trip },
+      trip,
+      // id: nanoid(),
     );
     this.destroy();
   };

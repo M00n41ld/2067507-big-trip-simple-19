@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { getRandomPositiveInteger } from './utils/common';
 const SortType = {
   DAY: 'default',
@@ -20,6 +19,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 

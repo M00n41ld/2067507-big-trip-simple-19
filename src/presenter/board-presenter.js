@@ -9,7 +9,7 @@ import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPriceDown, sortDayUp } from '../utils/trip.js';
 import { filter } from '../utils/trip.js';
 import NewTripPresenter from './newTrip-presenter.js';
-
+import Loading from '../view/loading.js';
 
 export default class BoardPresenter {
 
@@ -23,6 +23,8 @@ export default class BoardPresenter {
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
   #newTripPresenter = null;
+  #loadingComponent = new Loading();
+  #isLoading = true;
 
   constructor({ listContainer, tripModel, filterModel, onNewTripDestroy }) {
     this.#listContainer = listContainer;
@@ -102,15 +104,26 @@ export default class BoardPresenter {
         this.#clearBoard({ resetSortType: true, resetFilterType: true });
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#listContainer);
+  }
+
   #clearBoard({ resetSortType = false, resetFilterType = false } = {}) {
+    const tripCount = this.trips.length;
+    console.log(tripCount)
     this.#newTripPresenter.destroy();
     this.#tripPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPresenters.clear();
     // remove(this.#noTripsComponent);
-
+    remove(this.#loadingComponent);
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
       this.#clearSorting();
@@ -168,6 +181,11 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#listComponent, this.#listContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     if (this.trips.length === 0) {
       this.#renderNoTrips();

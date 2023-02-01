@@ -6,15 +6,12 @@ import { defaultPoint } from '../const';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
 function createNewFormTemplate(trip) {
-  console.log('trip');
-  // console.log(trip);
+  // console.log('trip');
 
   const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
   const { name, description, pictures } = destinationPoint;
-
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-
   const { offers} = offerByType;
 
   return (
@@ -108,11 +105,9 @@ export default class NewForm extends AbstractStatefulView {
   #datepickerStart = null;
   #datepickerEnd = null;
 
-
   constructor({trip = defaultPoint, onFormSubmit, onDeleteClick}) {
     super();
     this._setState(NewForm.parseTripToState(trip));
-    // this.#defaultTrip = trip;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
 
@@ -178,7 +173,7 @@ export default class NewForm extends AbstractStatefulView {
         dateFormat: 'd/m/Y H:i',
         enableTime: true,
         defaultDate: this._state.dateFrom,
-        time_24hr: true,
+        'time_24hr': true,
         onClose: this.#dateChangeHandlerFrom,
       },);
   }
@@ -188,7 +183,7 @@ export default class NewForm extends AbstractStatefulView {
       {
         dateFormat: 'd/m/Y H:i',
         enableTime: true,
-        time_24hr: true,
+        'time_24hr': true,
         minDate: this._state.dateFrom,
         defaultDate: this._state.dateTo,
         onClose: this.#dateChangeHandlerTo,
@@ -204,7 +199,6 @@ export default class NewForm extends AbstractStatefulView {
       offerByType: newOfferByType,
       offers: []
     });
-
   };
 
   #changeDestinationHandler = (evt) => {
@@ -231,7 +225,6 @@ export default class NewForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    debugger
     this.#handleFormSubmit(NewForm.parseStateToTrip(this._state));
   };
 

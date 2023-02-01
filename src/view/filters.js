@@ -2,7 +2,6 @@ import AbstractView from '../framework/view/abstract-view';
 import { FilterType } from '../const';
 function createFiltersTemplate(trips, currentFilterType) {
   const now = Date.now();
-
   const filterArr = Object.values(FilterType);
 
   function isInPast(element) {
@@ -37,7 +36,6 @@ export default class NewFilters extends AbstractView {
 
     this.#currentFilter = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;
-
     this.element.addEventListener('change', this.#filterTypeChangeHandler);
   }
 

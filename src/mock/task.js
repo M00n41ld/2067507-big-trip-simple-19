@@ -1,5 +1,4 @@
 import { getRandomArrayElement, getRandomPositiveInteger } from '../utils/common';
-import { nanoid } from 'nanoid';
 
 const newData = [
   {

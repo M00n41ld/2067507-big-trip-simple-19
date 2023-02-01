@@ -5,7 +5,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
-
+// console.log(trip)
   const { basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
   const { name, description, pictures } = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
@@ -185,7 +185,7 @@ export default class EditForm extends AbstractStatefulView {
         dateFormat: 'd/m/Y H:i',
         enableTime: true,
         defaultDate: this._state.dateFrom,
-        time_24hr: true,
+        'time_24hr': true,
         onClose: this.#dateChangeHandlerFrom,
       },);
   }
@@ -195,7 +195,7 @@ export default class EditForm extends AbstractStatefulView {
       {
         dateFormat: 'd/m/Y H:i',
         enableTime: true,
-        time_24hr: true,
+        'time_24hr': true,
         minDate: this._state.dateFrom,
         defaultDate: this._state.dateTo,
         onClose: this.#dateChangeHandlerTo,
@@ -239,8 +239,6 @@ export default class EditForm extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
-
-
   };
 
   #editCloseHandler = () => {
@@ -276,6 +274,5 @@ export default class EditForm extends AbstractStatefulView {
         ...this._state
       });
     }
-
   };
 }
