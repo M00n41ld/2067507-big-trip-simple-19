@@ -45,7 +45,6 @@ export default class TripsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
-
     return parsedResponse;
   }
 
@@ -61,10 +60,9 @@ export default class TripsApiService extends ApiService {
   #adaptToServer(trip) {
     const adaptedTrip = {
       ...trip,
-      'date_from': trip.dateFrom instanceof Date ? trip.dateFrom.toISOString() : null,
-      // !== null ? new Date(task['due_date']) : task['due_date']
+      'date_from': trip.dateFrom.toISOString(),
       'base_price': trip.basePrice,
-      'date_to': trip.dateTo instanceof Date ? trip.dateTo.toISOString() : null,
+      'date_to': trip.dateTo.toISOString(),
     };
 
     delete adaptedTrip.dateFrom;

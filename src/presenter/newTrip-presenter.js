@@ -10,11 +10,10 @@ export default class NewTripPresenter {
 
   #tripEditComponent = null;
 
-  constructor({ tripListContainer, onDataChange, onDestroy, trip }) {
+  constructor({ tripListContainer, onDataChange, onDestroy}) {
     this.#tripListContainer = tripListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
-    this.#trip = trip;
   }
 
   get trip() {
@@ -22,8 +21,8 @@ export default class NewTripPresenter {
     return trip;
   }
 
-  init() {
-    // const trip = this.#trip;
+  init(trip) {
+    this.#trip = trip;
     if (this.#tripEditComponent !== null) {
       return;
     }
@@ -31,6 +30,7 @@ export default class NewTripPresenter {
     this.#tripEditComponent = new NewForm({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
+      trip: this.trip
     });
 
     render(this.#tripEditComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN);
@@ -53,9 +53,7 @@ export default class NewTripPresenter {
       UserAction.ADD_TASK,
       UpdateType.MINOR,
       trip,
-      // id: nanoid(),
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
@@ -68,4 +66,22 @@ export default class NewTripPresenter {
       this.destroy();
     }
   };
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#tripEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#tripEditComponent.shake(resetFormState);
+  }
+
+  setSaving() {
+    this.#tripEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
 }

@@ -33,7 +33,6 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      // onDataChangeEdit: this.#handleDataChange,
       onDeleteClick: this.#handleDeleteClick,
     });
 
@@ -47,7 +46,8 @@ export default class TripPresenter {
       return;
     }
     if (this.#mode === Mode.EDITING) {
-      replace(this.#editTripComponent, prevTripEditComponent);
+      replace(this.#tripComponent, prevTripEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     if (this.#mode === Mode.DEFAULT) {
@@ -68,6 +68,41 @@ export default class TripPresenter {
       this.#editTripComponent.reset(this.#trip);
       this.#replaceFormToCard();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editTripComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editTripComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#tripComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editTripComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editTripComponent.shake(resetFormState);
   }
 
   #replaceCardToForm() {
@@ -107,7 +142,6 @@ export default class TripPresenter {
       UpdateType.MINOR,
       update,
     );
-    this.#replaceFormToCard();
   };
 
   #handleDeleteClick = (update) => {
@@ -116,7 +150,6 @@ export default class TripPresenter {
       UpdateType.MINOR,
       update,
     );
-    // this.#replaceFormToCard();
   };
 }
 

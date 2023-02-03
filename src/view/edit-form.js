@@ -5,13 +5,10 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
-// console.log(trip)
-  const { basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
+  const { isDisabled, isDeleting, isSaving, basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
   const { name, description, pictures } = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-
-
   const { offers } = offerByType;
 
   return (
@@ -24,10 +21,10 @@ function createEditableTemplate(trip) {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${trip.id}" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${trip.id}" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
-            <fieldset class="event__type-group">
+            <fieldset class="event__type-group" ${isDisabled ? 'disabled' : ''}>
               <legend class="visually-hidden">Event type</legend>
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
@@ -41,7 +38,7 @@ function createEditableTemplate(trip) {
           <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}">
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-${destinationPoint.id}">
           ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
@@ -49,10 +46,10 @@ function createEditableTemplate(trip) {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-${trip.id}">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-${trip.id}" type="text" name="event-start-time" value="${dateFromHum}">
+          <input class="event__input  event__input--time" id="event-start-time-${trip.id}" type="text" name="event-start-time" value="${dateFromHum}" ${isDisabled ? 'disabled' : ''}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-${trip.id}">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-${trip.id}" type="text" name="event-end-time" value="${dateToHum}">
+          <input class="event__input  event__input--time" id="event-end-time-${trip.id}" type="text" name="event-end-time" value="${dateToHum}" ${isDisabled ? 'disabled' : ''}>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -60,30 +57,30 @@ function createEditableTemplate(trip) {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value=${basePrice}>
+          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value=${basePrice} ${isDisabled ? 'disabled' : ''}>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-        <button class="event__rollup-btn" type="button">
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}> ${isDeleting ? 'Deleting...' : 'Delete'}</button>
+        <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
           <span class="visually-hidden">Open event</span>
         </button>
       </header>
-      <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-          <div class="event__available-offers">
-          ${offers.map((offer) => (`<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${trip.offers.includes(offer.id) ? 'checked' : ''}>
-          <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </label>
-        </div>`)).join('')}
-          </div>
-        </section>
+      <section class="event__details">
+      <section class="event__section  ${offers.length === 0 ? 'visually-hidden' : ''} event__section--offers">
+     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+      ${offers.map((offer) => (`<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${trip.offers.includes(offer.id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+      <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>`)).join('')}
+      </div>
+    </section>
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -105,15 +102,15 @@ export default class EditForm extends AbstractStatefulView {
   #handleFormSubmit = null;
   #datepickerStart = null;
   #datepickerEnd = null;
-  #handleDataChange = null;
+  // #handleDataChange = null;
   #handleEditCloseClick = null;
   #handleDeleteClick = null;
 
-  constructor({ trip, onFormSubmit, onEditCloseClick, onDataChangeEdit, onDeleteClick }) {
+  constructor({ trip, onFormSubmit, onEditCloseClick, onDeleteClick }) {
     super();
     this._setState(EditForm.parseTripToState(trip));
     this.#handleDeleteClick = onDeleteClick;
-    this.#handleDataChange = onDataChangeEdit;
+    // this.#handleDataChange = onDataChangeEdit;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
     this._restoreHandlers();
@@ -247,12 +244,18 @@ export default class EditForm extends AbstractStatefulView {
 
   static parseTripToState(trip) {
     return {
-      ...trip
+      ...trip,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
   static parseStateToTrip(state) {
     const trip = { ...state };
+    delete trip.isDisabled;
+    delete trip.isSaving;
+    delete trip.isDeleting;
     return trip;
   }
 

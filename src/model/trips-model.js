@@ -25,9 +25,23 @@ export default class TripModel extends Observable {
         offersByType,
         destinationPoint,
         destinationsList,
-
       };
     });
+  }
+
+  get defaultTrip() {
+    const destinationPoint = this.#destinations.find((point) => point.id === this.#trips[0].destination);
+    const offerByType = this.#offersByType.find((offer) => offer.type === this.#trips[0].type);
+    const offersByType = this.#offersByType;
+    const destinationsList = this.#destinations;
+    const trip = this.#trips[0];
+    return {
+      ...trip,
+      offerByType,
+      offersByType,
+      destinationPoint,
+      destinationsList,
+    };
   }
 
   async init() {
@@ -54,7 +68,6 @@ export default class TripModel extends Observable {
     }
 
     try {
-      debugger
       const response = await this.#tripsApiService.updateTrip(update);
       const updatedTrip = this.#adaptToClient(response);
       this.#trips = [
@@ -70,12 +83,6 @@ export default class TripModel extends Observable {
   }
 
   async addTrip(updateType, update) {
-    // this.#trips = [
-    //   update,
-    //   ...this.#trips,
-    // ];
-    // this._notify(updateType, update);
-
     try {
       const response = await this.#tripsApiService.addTrip(update);
       const newTrip = this.#adaptToClient(response);
@@ -92,7 +99,6 @@ export default class TripModel extends Observable {
       throw new Error('Can\'t delete unexisting task');
     }
     try {
-
       await this.#tripsApiService.deleteTrip(update);
       this.#trips = [
         ...this.#trips.slice(0, index),
@@ -107,10 +113,9 @@ export default class TripModel extends Observable {
   #adaptToClient(trip) {
     const adaptedTrip = {
       ...trip,
-      dateFrom: trip['date_from'],
-      // !== null ? new Date(task['due_date']) : task['due_date']
+      dateFrom: new Date(trip['date_from']),
       basePrice: trip['base_price'],
-      dateTo: trip['date_to'],
+      dateTo: new Date(trip['date_to']),
     };
 
     delete adaptedTrip['date_from'];
