@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import NewDestination from '../view/destinations';
+import NewDestination from '../view/new-destinations';
 import EditForm from '../view/edit-form.js';
 import { UserAction, UpdateType } from '../const.js';
 
@@ -118,15 +118,6 @@ export default class TripPresenter {
     this.#mode = Mode.DEFAULT;
   }
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.#editTripComponent.reset(this.#trip);
-      this.#replaceFormToCard();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-    }
-  };
-
   #handleEditClick = () => {
     this.#replaceCardToForm();
   };
@@ -150,6 +141,15 @@ export default class TripPresenter {
       UpdateType.MINOR,
       update,
     );
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#editTripComponent.reset(this.#trip);
+      this.#replaceFormToCard();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
   };
 }
 

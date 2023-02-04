@@ -32,7 +32,6 @@ export default class TripsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
-
     return parsedResponse;
   }
 
@@ -53,7 +52,6 @@ export default class TripsApiService extends ApiService {
       url: `points/${trip.id}`,
       method: Method.DELETE,
     });
-
     return response;
   }
 

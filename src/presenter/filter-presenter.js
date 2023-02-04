@@ -1,5 +1,5 @@
 import { render, remove, replace } from '../framework/render';
-import NewFilters from '../view/filters';
+import NewFilters from '../view/new-filters';
 import { UpdateType } from '../const';
 
 export default class FilterPresenter {

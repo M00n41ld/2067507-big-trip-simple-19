@@ -7,7 +7,6 @@ export default class NewTripPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
   #trip = null;
-
   #tripEditComponent = null;
 
   constructor({ tripListContainer, onDataChange, onDestroy}) {
@@ -34,7 +33,6 @@ export default class NewTripPresenter {
     });
 
     render(this.#tripEditComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN);
-
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
@@ -46,6 +44,24 @@ export default class NewTripPresenter {
     remove(this.#tripEditComponent);
     this.#tripEditComponent = null;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#tripEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#tripEditComponent.shake(resetFormState);
+  }
+
+  setSaving() {
+    this.#tripEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
   }
 
   #handleFormSubmit = (trip) => {
@@ -66,22 +82,4 @@ export default class NewTripPresenter {
       this.destroy();
     }
   };
-
-  setAborting() {
-    const resetFormState = () => {
-      this.#tripEditComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
-    };
-    this.#tripEditComponent.shake(resetFormState);
-  }
-
-  setSaving() {
-    this.#tripEditComponent.updateElement({
-      isDisabled: true,
-      isSaving: true,
-    });
-  }
 }

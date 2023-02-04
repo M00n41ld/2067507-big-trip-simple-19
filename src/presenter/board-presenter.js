@@ -1,13 +1,13 @@
 import { remove, render } from '../framework/render.js';
 import TripPresenter from './destination-presenter.js';
-import NewSorting from '../view/sorting';
-import NewList from '../view/destinations-list';
+import NewSorting from '../view/new-sorting';
+import NewList from '../view/new-list';
 import { RenderPosition } from '../framework/render.js';
 import NoTrips from '../view/no-trip';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
-import { sortPriceDown, sortDayUp } from '../utils/trip.js';
+import { doSortPriceDown, doSortDayUp } from '../utils/trip.js';
 import { filter } from '../utils/trip.js';
-import NewTripPresenter from './newTrip-presenter.js';
+import NewTripPresenter from './new-trip-presenter.js';
 import Loading from '../view/loading.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
@@ -53,9 +53,9 @@ export default class BoardPresenter {
     const filteredTrip = filter[this.#filterType](trips);
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return filteredTrip.sort(sortPriceDown);
+        return filteredTrip.sort(doSortPriceDown);
       case SortType.DAY:
-        return filteredTrip.sort(sortDayUp);
+        return filteredTrip.sort(doSortDayUp);
     }
     return filteredTrip;
   }
@@ -69,6 +69,38 @@ export default class BoardPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newTripPresenter.init(this.#tripModel.defaultTrip);
+  }
+
+  #renderSortingPlate() {
+    this.#renderSorting();
+  }
+
+  #renderSorting() {
+    this.#sortingComponent = new NewSorting({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+    render(this.#listComponent, this.#listContainer);
+    render(this.#sortingComponent, this.#listComponent.element, RenderPosition.BEFOREBEGIN);
+  }
+
+  #renderBoard() {
+    render(this.#listComponent, this.#listContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.trips.length === 0) {
+      this.#renderNoTrips();
+      return;
+    }
+    // for (let i = 0; i < this.trips.length; i++) {
+    //   this.#renderTrip(this.trips[i]);
+    // }
+    for (const trip of this.trips) {
+      this.#renderTrip(trip);
+    }
   }
 
   #renderTrip(trip) {
@@ -88,32 +120,6 @@ export default class BoardPresenter {
     });
     render(this.#noTripsComponent, this.#listContainer);
   }
-
-  #handleModeChange = () => {
-    this.#newTripPresenter.destroy();
-    this.#tripPresenters.forEach((presenter) => { presenter.resetView(); });
-  };
-
-  #handleModelEvent = (updateType, data) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this.#tripPresenters.get(data.id).init(data);
-        break;
-      case UpdateType.MINOR:
-        this.#clearBoard();
-        this.#renderBoard();
-        break;
-      case UpdateType.MAJOR:
-        this.#clearBoard({ resetSortType: true, resetFilterType: true });
-        this.#renderBoard();
-        break;
-      case UpdateType.INIT:
-        this.#isLoading = false;
-        remove(this.#loadingComponent);
-        this.#renderBoard();
-        break;
-    }
-  };
 
   #renderLoading() {
     render(this.#loadingComponent, this.#listContainer);
@@ -183,34 +189,31 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #renderSorting() {
-    this.#sortingComponent = new NewSorting({
-      onSortTypeChange: this.#handleSortTypeChange
-    });
-    render(this.#listComponent, this.#listContainer);
-    render(this.#sortingComponent, this.#listComponent.element, RenderPosition.BEFOREBEGIN);
-  }
+  #handleModeChange = () => {
+    this.#newTripPresenter.destroy();
+    this.#tripPresenters.forEach((presenter) => { presenter.resetView(); });
+  };
 
-  #renderSortingPlate() {
-    this.#renderSorting();
-  }
-
-  #renderBoard() {
-    render(this.#listComponent, this.#listContainer);
-
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#tripPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({ resetSortType: true, resetFilterType: true });
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
-
-    if (this.trips.length === 0) {
-      this.#renderNoTrips();
-      return;
-    }
-    for (let i = 0; i < this.trips.length; i++) {
-      this.#renderTrip(this.trips[i]);
-    }
-  }
+  };
 }
 
 

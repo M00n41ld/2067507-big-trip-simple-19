@@ -1,4 +1,3 @@
-
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const';
 
@@ -35,6 +34,7 @@ export default class TripModel extends Observable {
     const offersByType = this.#offersByType;
     const destinationsList = this.#destinations;
     const trip = this.#trips[0];
+    trip.id = null;
     return {
       ...trip,
       offerByType,

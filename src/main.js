@@ -1,12 +1,11 @@
 import TripsApiService from './trips-api-service';
 import BoardPresenter from './presenter/board-presenter';
-import '../src/utils/common';
 import '../src/utils/trip';
 import TripModel from './model/trips-model';
 import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
 import NewTripButton from './view/new-trip-button';
-
+//Не нужно в конст выносить?
 const AUTHORIZATION = 'Basic hSk44w6cl1sa2j';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 

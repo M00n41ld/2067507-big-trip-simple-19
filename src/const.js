@@ -21,4 +21,10 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-export {SortType, UserAction, UpdateType, FilterType};
+const dateFormats = {
+  DATE_FORMAT: 'DD/MM/YYYY HH:mm',
+  DATE_FORMAT_TIME: 'HH:mm',
+  DATE_FORMAT_FORMS: 'DD/MM/YYYY HH:mm',
+};
+
+export {SortType, UserAction, UpdateType, FilterType, dateFormats};
