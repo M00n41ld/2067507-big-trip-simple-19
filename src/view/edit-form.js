@@ -6,11 +6,10 @@ import { dateFormats} from '../const';
 
 function createEditableTemplate(trip) {
   const { isDisabled, isDeleting, isSaving, basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
-  const { name, description, pictures } = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, dateFormats.DATE_FORMAT_FORMS);
   const dateToHum = humanizeDate(dateTo, dateFormats.DATE_FORMAT_FORMS);
   const { offers } = offerByType;
-console.log(trip)
+
   return (
 
     `<li class="trip-events__item">
@@ -38,7 +37,7 @@ console.log(trip)
           <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}" ${isDisabled ? 'disabled' : ''}>
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="event-destination" value="${destinationPoint.name}" list="destination-list-${destinationPoint.id}" ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-${destinationPoint.id}">
           ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
@@ -57,7 +56,7 @@ console.log(trip)
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value=${basePrice} ${isDisabled ? 'disabled' : ''}>
+          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
@@ -68,30 +67,29 @@ console.log(trip)
       </header>
 
       <section class="event__details">
-      <section class="event__section  ${offers.length === 0 ? 'visually-hidden' : ''} event__section--offers">
-     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-      <div class="event__available-offers">
-      ${offers.map((offer) => (`<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${trip.offers.includes(offer.id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
-      <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`)).join('')}
-      </div>
-    </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-            ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
-            </div>
+        <section class="event__section  ${offers.length === 0 ? 'visually-hidden' : ''} event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+             ${offers.map((offer) => (`<div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${trip.offers.includes(offer.id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+              <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
+                <span class="event__offer-title">${offer.title}</span>
+                &plus;&euro;&nbsp;
+                <span class="event__offer-price">${offer.price}</span>
+              </label>
+             </div>`)).join('')}
           </div>
         </section>
+            ${destinationPoint ? `  <section class="event__section  event__section--destination">
+             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+             <p class="event__destination-description">${destinationPoint.description}</p>
+
+         <div class="event__photos-container">
+           <div class="event__photos-tape">
+              ${destinationPoint.pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
+            </div>
+          </div>
+        </section>` : ''}
       </section>
     </form>
   </li>`
@@ -204,10 +202,16 @@ export default class EditForm extends AbstractStatefulView {
   };
 
   #dateChangeHandlerFrom = ([userDate]) => {
-    this.updateElement({
-      dateFrom: userDate,
-    });
-
+    if (userDate > this._state.dateTo) {
+      this.updateElement({
+        dateFrom: userDate,
+        dateTo: userDate,
+      });
+    } else {
+      this.updateElement({
+        dateFrom: userDate,
+      });
+    }
   };
 
   #dateChangeHandlerTo = ([userDate]) => {

@@ -1,6 +1,15 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const';
 
+const DEFAULT_POINT = {
+  'base_price': '',
+  'date_from': '2019-07-10T22:55:56.845Z',
+  'date_to': '2019-07-11T11:22:13.375Z',
+  destination: 0,
+  offers: [1, 2, 3],
+  type: 'taxi'
+};
+
 export default class TripModel extends Observable {
   #trips = [];
   #destinations = [];
@@ -14,7 +23,7 @@ export default class TripModel extends Observable {
 
   get trip() {
     return this.#trips.map((trip) => {
-      const destinationPoint = this.#destinations.find((point) => point.id === trip.destination);
+      const destinationPoint = this.#destinations.find((point) => point.id === trip.destination) ;
       const offerByType = this.#offersByType.find((offer) => offer.type === trip.type);
       const offersByType = this.#offersByType;
       const destinationsList = this.#destinations;
@@ -29,20 +38,29 @@ export default class TripModel extends Observable {
   }
 
   get defaultTrip() {
-    const destinationPoint = this.#destinations.find((point) => point.id === this.#trips[0].destination);
-    const offerByType = this.#offersByType.find((offer) => offer.type === this.#trips[0].type);
+    const offerByType = this.#getOfferByType(DEFAULT_POINT).offerByType;
     const offersByType = this.#offersByType;
+    const destinationPoint = this.#getDestinationPoint(DEFAULT_POINT).destination ? this.#getDestinationPoint(DEFAULT_POINT).destination : '';
     const destinationsList = this.#destinations;
-    const trip = this.#trips[0];
-    trip.id = null;
+
     return {
-      ...trip,
+      ...this.#adaptToClient(DEFAULT_POINT),
       offerByType,
       offersByType,
       destinationPoint,
       destinationsList,
     };
   }
+
+  #getOfferByType = (trip) => {
+    const offerByType = this.#offersByType.find((offer) => offer.type === trip.type);
+    return {offerByType};
+  };
+
+  #getDestinationPoint = (trip) => {
+    const destinationPoint = this.#destinations.find((point) => point.id === trip.destination);
+    return {destinationPoint};
+  };
 
   async init() {
     try {

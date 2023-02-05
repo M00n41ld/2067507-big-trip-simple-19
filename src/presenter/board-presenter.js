@@ -16,6 +16,7 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+
 export default class BoardPresenter {
   #listContainer = null;
   #tripModel = null;
@@ -33,6 +34,8 @@ export default class BoardPresenter {
     lowerLimit: TimeLimit.LOWER_LIMIT,
     upperLimit: TimeLimit.UPPER_LIMIT
   });
+
+  #isNewEventOpened = false;
 
   constructor({ listContainer, tripModel, filterModel, onNewTripDestroy }) {
     this.#listContainer = listContainer;
@@ -66,6 +69,7 @@ export default class BoardPresenter {
   }
 
   createTrip() {
+    this.#isNewEventOpened = true;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newTripPresenter.init(this.#tripModel.defaultTrip);
@@ -90,17 +94,16 @@ export default class BoardPresenter {
       this.#renderLoading();
       return;
     }
-
-    if (this.trips.length === 0) {
+    if (this.trips.length === 0 && this.#isNewEventOpened === false) {
+      this.#clearSorting();
       this.#renderNoTrips();
       return;
     }
-    // for (let i = 0; i < this.trips.length; i++) {
-    //   this.#renderTrip(this.trips[i]);
-    // }
+
     for (const trip of this.trips) {
       this.#renderTrip(trip);
     }
+    this.#isNewEventOpened = false;
   }
 
   #renderTrip(trip) {
