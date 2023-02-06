@@ -35,17 +35,19 @@ export default class BoardPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  #isNewEventOpened = false;
+  #isNewEventOpened = null;
 
-  constructor({ listContainer, tripModel, filterModel, onNewTripDestroy }) {
+  constructor({ listContainer, tripModel, filterModel, onNewTripDestroy, newPointSave }) {
     this.#listContainer = listContainer;
     this.#tripModel = tripModel;
+    this.#isNewEventOpened = newPointSave;
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel = filterModel;
     this.#newTripPresenter = new NewTripPresenter({
       tripListContainer: this.#listComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewTripDestroy,
+      clearBoard : this.#clearBoard
     });
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -103,7 +105,6 @@ export default class BoardPresenter {
     for (const trip of this.trips) {
       this.#renderTrip(trip);
     }
-    this.#isNewEventOpened = false;
   }
 
   #renderTrip(trip) {
@@ -117,18 +118,18 @@ export default class BoardPresenter {
     this.#tripPresenters.set(trip.id, tripPresenter);
   }
 
-  #renderNoTrips() {
+  #renderNoTrips = () => {
     this.#noTripsComponent = new NoTrips({
       filterType: this.#filterType
     });
     render(this.#noTripsComponent, this.#listContainer);
-  }
+  };
 
   #renderLoading() {
     render(this.#loadingComponent, this.#listContainer);
   }
 
-  #clearBoard({ resetSortType = false, resetFilterType = false } = {}) {
+  #clearBoard = ({ resetSortType = false, resetFilterType = false } = {}) => {
     this.#newTripPresenter.destroy();
     this.#tripPresenters.forEach((presenter) => presenter.destroy());
     this.#tripPresenters.clear();
@@ -146,7 +147,7 @@ export default class BoardPresenter {
     if (resetFilterType) {
       this.#filterType = FilterType.EVERYTHING;
     }
-  }
+  };
 
   #clearSorting() {
     remove(this.#sortingComponent);
@@ -165,6 +166,7 @@ export default class BoardPresenter {
         break;
       case UserAction.ADD_TASK:
         this.#newTripPresenter.setSaving();
+        this.#isNewEventOpened = false;
         try {
           await this.#tripModel.addTrip(updateType, update);
         } catch(err) {

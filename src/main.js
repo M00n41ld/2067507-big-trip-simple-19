@@ -8,7 +8,7 @@ import NewTripButton from './view/new-trip-button';
 
 const AUTHORIZATION = 'Basic hk44wcl1sa2j';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
-
+const newPointSave = false;
 const filtersElement = document.querySelector('.trip-controls__filters');
 const mainElement = document.querySelector('.trip-events');
 const filterModel = new FilterModel();
@@ -17,7 +17,7 @@ const tripModel = new TripModel({
   tripsApiService: new TripsApiService(END_POINT, AUTHORIZATION)
 });
 const boardPresenter = new BoardPresenter({ listContainer: mainElement, tripModel, filterModel,
-  onNewTripDestroy: handleNewTripFormClose });
+  onNewTripDestroy: handleNewTripFormClose, newPointSave });
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersElement,
   filterModel,
