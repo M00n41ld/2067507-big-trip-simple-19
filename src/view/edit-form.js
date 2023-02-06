@@ -1,19 +1,14 @@
 import AbstractView from '../framework/view/abstract-view';
-import { humanizeDate } from '../utils';
+import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
-function createEditableTemplate(trip, allOffers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = trip;
-  const {description, name, pictures} = destination;
-  const {src} = pictures[0];
+function createEditableTemplate(trip) {
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
+  const {name, description, pictures} = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
-  const copyAllOffers = allOffers;
 
-  const allOffersByType = allOffers.find((offer) => offer.type === type);
-
-  const { offers} = allOffersByType;
-
+  const { offers} = offerByType;
   return (
 
     `<li class="trip-events__item">
@@ -29,23 +24,28 @@ function createEditableTemplate(trip, allOffers) {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
+
+              ${offersByType.map((offer) => (`<div class="event__type-item">
+              <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
+
               ${copyAllOffers.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
+
             </div>`)).join('')}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-${trip.id}">
+
+          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${trip.id}" type="text" name="${name}" value="${name}" list="destination-list-${trip.id}">
-          <datalist id="destination-list-${destination.id}">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="${name}" value="${name}" list="destination-list-${destinationPoint.id}">
+          <datalist id="destination-list-${destinationPoint.id}">
+          ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
         </div>
 
@@ -90,6 +90,14 @@ function createEditableTemplate(trip, allOffers) {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
+
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+            ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
+            </div>
+          </div>
+
         </section>
       </section>
     </form>
@@ -100,27 +108,45 @@ function createEditableTemplate(trip, allOffers) {
 export default class EditForm extends AbstractView {
   #handleFormSubmit = null;
   #trip = null;
-  #allOffers = null;
-  #handleEditCloseClick = null;
 
-  constructor({trip, allOffers, onFormSubmit, onEditCloseClick}) {
+  // #allOffers = null;
+  #handleEditCloseClick = null;
+  // #handleCheckedClick = null;
+
+  constructor({trip, onFormSubmit, onEditCloseClick}) {
     super();
     this.#trip = trip;
-    this.#allOffers = allOffers;
+    // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
-
+    // this.#handleCheckedClick = onCheckboxClick;
+    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
   }
 
   get template() {
+
+    return createEditableTemplate(this.#trip);
+  }
+
+  // #addCheckedHandler = (evt) => {
+  //   const test = evt.target.closest('.event__offer-selector');
+  //   this.#handleCheckedClick(test);
+  // };
+
+  #formSubmitHandler = (evt) => {
+    // console.log('click');
+    evt.preventDefault();
+    this.#handleFormSubmit(this.#trip);
     return createEditableTemplate(this.#trip, this.#allOffers);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit();
+
   };
 
   #editCloseHandler = () => {

@@ -4,66 +4,74 @@ import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
-function createNewFormTemplate(trip, allOffers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = trip;
-  const {description, name, pictures} = destination;
-  const {src} = pictures[0];
+function createNewFormTemplate(trip) {
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
+  const {name, description, pictures} = destinationPoint;
+  // const {src} = pictures[0];
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
+
+
+  const { offers} = offerByType;
   const copyAllOffers = allOffers;
   const allOffersByType = allOffers.find((offer) => offer.type === type);
 
   const { offers} = allOffersByType;
+
 
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
-          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <label class="event__type  event__type-btn" for="event-type-toggle-${trip.id}">
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${trip.id}" type="checkbox">
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
+
+              ${offersByType.map((offer) => (`<div class="event__type-item">
+              <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
+
               ${copyAllOffers.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
+
             </div>`)).join('')}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
+          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
           ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
-          <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="event-destination" value="${name}" list="destination-list-${destinationPoint.id}">
+          <datalist id="destination-list-${destinationPoint.id}">
+          ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
         </div>
 
         <div class="event__field-group  event__field-group--time">
-          <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromHum}">
+          <label class="visually-hidden" for="event-start-time-${trip.id}">From</label>
+          <input class="event__input  event__input--time" id="event-start-time-${trip.id}" type="text" name="event-start-time" value="${dateFromHum}">
           &mdash;
-          <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateToHum}">
+          <label class="visually-hidden" for="event-end-time-${trip.id}">To</label>
+          <input class="event__input  event__input--time" id="event-end-time-${trip.id}" type="text" name="event-end-time" value="${dateToHum}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
-          <label class="event__label" for="event-price-1">
+          <label class="event__label" for="event-price-${trip.id}">
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-${trip.id}" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -91,11 +99,7 @@ function createNewFormTemplate(trip, allOffers) {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
-              <img class="event__photo" src="${src}" alt="Event photo">
+            ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
             </div>
           </div>
         </section>
@@ -108,20 +112,20 @@ function createNewFormTemplate(trip, allOffers) {
 export default class NewForm extends AbstractView {
   #handleFormSubmit = null;
   #trip = null;
-  #allOffers = null;
+  // #allOffers = null;
 
 
-  constructor({trip, allOffers, onFormSubmit}) {
+  constructor({trip, onFormSubmit}) {
     super();
     this.#trip = trip;
-    this.#allOffers = allOffers;
+    // this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
 
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
-    return createNewFormTemplate(this.#trip, this.#allOffers);
+    return createNewFormTemplate(this.#trip);
   }
 
   #formSubmitHandler = (evt) => {

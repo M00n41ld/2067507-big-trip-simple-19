@@ -6,32 +6,20 @@ const DATE_FORMAT_DAY = 'DD MMM';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
+
+function createDestinationTemplate(trip) {
+  const {basePrice, dateFrom, dateTo, type, destinationPoint, checkedOffers} = trip;
+  const {name} = destinationPoint;
+
 function createDestinationTemplate(trip, allOffers) {
   const {basePrice, dateFrom, dateTo, destination, type} = trip;
-  const {name} = destination;
+
 
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
   const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
   const fullDateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
-  const allOffersByType = allOffers.find((offer) => offer.type === type);
-  const { offers} = allOffersByType;
-
-
-  function showChecked () {
-    const visibleOffers = [];
-    for (let i = 0; i < offers.length; i++) {
-      for (let j = 0; j < trip.offers.length; j++) {
-        if (offers[i].id === trip.offers[j]) {
-          visibleOffers.push(offers[i]);
-        }
-      }
-    }
-    return visibleOffers;
-  }
-
-  const checkedOffers = showChecked();
 
   return (
     `<li class="trip-events__item">
@@ -69,20 +57,20 @@ function createDestinationTemplate(trip, allOffers) {
 
 export default class NewDestination extends AbstractView{
   #trip = null;
-  #allOffers = null;
+  // #allOffers = null;
   #handleEditClick = null;
 
-  constructor({trip, allOffers, onEditClick}) {
+  constructor({trip, onEditClick}) {
     super();
     this.#trip = trip;
-    this.#allOffers = allOffers;
+    // this.#allOffers = allOffers;
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler());
     // this.offersByType = offersByType;
   }
 
   get template() {
-    return createDestinationTemplate(this.#trip, this.#allOffers);
+    return createDestinationTemplate(this.#trip);
   }
 
   #editClickHandler = () => {

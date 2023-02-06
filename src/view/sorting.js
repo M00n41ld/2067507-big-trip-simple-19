@@ -1,11 +1,12 @@
 import AbstractView from '../framework/view/abstract-view';
+import { SortType } from '../const';
 
 function createSortingTemplate() {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
-      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day">
-      <label class="trip-sort__btn" for="sort-day">Day</label>
+      <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" checked>
+      <label class="trip-sort__btn" for="sort-day" data-sort-type="${SortType.DAY}">Day</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--event">
@@ -19,8 +20,8 @@ function createSortingTemplate() {
     </div>
 
     <div class="trip-sort__item  trip-sort__item--price">
-      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" checked>
-      <label class="trip-sort__btn" for="sort-price">Price</label>
+      <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price">
+      <label class="trip-sort__btn" for="sort-price" data-sort-type="${SortType.PRICE}">Price</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--offer">
@@ -32,8 +33,27 @@ function createSortingTemplate() {
 }
 
 export default class NewSorting extends AbstractView {
+  #handleSortTypeChange = null;
+
+  constructor({onSortTypeChange}) {
+    super();
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+    // console.log(this.element)
+  }
 
   get template() {
     return createSortingTemplate();
   }
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'LABEL') {
+      // console.log(evt.target)
+      return;
+    }
+
+    // evt.preventDefault();
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 }
