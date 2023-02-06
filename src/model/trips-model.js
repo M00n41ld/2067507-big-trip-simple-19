@@ -3,8 +3,8 @@ import { UpdateType } from '../const';
 
 const DEFAULT_POINT = {
   'base_price': '',
-  'date_from': '2019-07-10T22:55:56.845Z',
-  'date_to': '2019-07-11T11:22:13.375Z',
+  'date_from': new Date(),
+  'date_to': new Date(),
   destination: 0,
   offers: [],
   type: 'taxi'
