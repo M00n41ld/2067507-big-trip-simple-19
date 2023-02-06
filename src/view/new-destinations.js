@@ -6,15 +6,9 @@ const DATE_FORMAT_DAY = 'DD MMM';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
-
 function createDestinationTemplate(trip) {
   const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType} = trip;
   const {name} = destinationPoint;
-
-function createDestinationTemplate(trip, allOffers) {
-  const {basePrice, dateFrom, dateTo, destination, type} = trip;
-
-
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
   const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
@@ -70,26 +64,22 @@ function createDestinationTemplate(trip, allOffers) {
 
 export default class NewDestination extends AbstractView{
   #trip = null;
-  // #allOffers = null;
   #handleEditClick = null;
 
   constructor({trip, onEditClick}) {
     super();
     this.#trip = trip;
-    // this.#allOffers = allOffers;
     this.#handleEditClick = onEditClick;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler());
-    // this.offersByType = offersByType;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createDestinationTemplate(this.#trip);
   }
 
-  #editClickHandler = () => {
-    // evt.preventDefault();
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
     this.#handleEditClick();
   };
-
 }
 

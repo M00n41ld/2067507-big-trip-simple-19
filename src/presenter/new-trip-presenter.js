@@ -1,21 +1,20 @@
 import { remove, render, RenderPosition } from '../framework/render';
-import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const';
 import NewForm from '../view/new-form';
+
 
 export default class NewTripPresenter {
   #tripListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
   #trip = null;
-
   #tripEditComponent = null;
 
-  constructor({ tripListContainer, onDataChange, onDestroy, trip }) {
+
+  constructor({ tripListContainer, onDataChange, onDestroy}) {
     this.#tripListContainer = tripListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
-    this.#trip = trip;
   }
 
   get trip() {
@@ -23,8 +22,8 @@ export default class NewTripPresenter {
     return trip;
   }
 
-  init() {
-    // const trip = this.#trip;
+  init(trip) {
+    this.#trip = trip;
     if (this.#tripEditComponent !== null) {
       return;
     }
@@ -32,10 +31,10 @@ export default class NewTripPresenter {
     this.#tripEditComponent = new NewForm({
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
+      trip: this.trip
     });
 
     render(this.#tripEditComponent, this.#tripListContainer, RenderPosition.AFTERBEGIN);
-
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
@@ -49,13 +48,30 @@ export default class NewTripPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#tripEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+    this.#tripEditComponent.shake(resetFormState);
+  }
+
+  setSaving() {
+    this.#tripEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #handleFormSubmit = (trip) => {
     this.#handleDataChange(
       UserAction.ADD_TASK,
-      UpdateType.MINOR,
-      { id: nanoid(), ...trip },
+      UpdateType.MAJOR,
+      trip,
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {

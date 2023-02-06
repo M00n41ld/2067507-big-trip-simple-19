@@ -1,31 +1,20 @@
 import dayjs from 'dayjs';
 import { FilterType } from '../const';
-const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
-const DATE_FORMAT_TIME = 'HH:mm';
-
+import { dateFormats } from '../const';
 function humanizeTaskDueDate(dueDate) {
-  return dueDate ? dayjs(dueDate).format(DATE_FORMAT) : '';
+  return dueDate ? dayjs(dueDate).format(dateFormats.DATE_FORMAT) : '';
 }
 
 function humanizeTaskDueTime(dueDate) {
-  return dueDate ? dayjs(dueDate).format(DATE_FORMAT_TIME) : '';
+  return dueDate ? dayjs(dueDate).format(dateFormats.DATE_FORMAT_TIME) : '';
 }
 
 function humanizeDate(date, formatData) {
   return date ? dayjs(date).format(formatData) : '';
 }
 
-function makingOffersByType(items, typeOfOffer, checkedTrip) {
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].type === typeOfOffer) {
-      checkedTrip.offers = items[i].offers;
-    }
-  }
-  return checkedTrip;
-}
-
-function sortPriceDown(A, B) {
-  return B.basePrice - A.basePrice;
+function doSortPriceDown(first, second) {
+  return second.basePrice - first.basePrice;
 }
 
 function getWeightForNullDate(dateA, dateB) {
@@ -43,9 +32,9 @@ function getWeightForNullDate(dateA, dateB) {
   return null;
 }
 
-function sortDayUp(A, B) {
-  const weight = getWeightForNullDate(A.dateFrom, B.dateFrom);
-  return weight ?? dayjs(A.dateFrom).diff(dayjs(B.dateFrom));
+function doSortDayUp(first, second) {
+  const weight = getWeightForNullDate(first.dateFrom, second.dateFrom);
+  return weight ?? dayjs(first.dateFrom).diff(dayjs(second.dateFrom));
 }
 
 function isInPast(element) {
@@ -60,4 +49,4 @@ const filter = {
   [FilterType.FUTURE]: (trips) => trips.filter((trip) => !isInPast(trip)),
 };
 
-export { filter, sortDayUp, sortPriceDown, makingOffersByType, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate };
+export { filter, doSortDayUp, doSortPriceDown, humanizeTaskDueDate, humanizeTaskDueTime, humanizeDate };

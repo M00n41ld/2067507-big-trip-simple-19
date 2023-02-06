@@ -1,19 +1,17 @@
 import { render, remove, replace } from '../framework/render';
-import NewFilters from '../view/filters';
+import NewFilters from '../view/new-filters';
 import { UpdateType } from '../const';
 
 export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #tripModel = null;
-
   #filterComponent = null;
 
   constructor({ filterContainer, filterModel, tripModel }) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#tripModel = tripModel;
-
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -25,7 +23,6 @@ export default class FilterPresenter {
 
   init() {
     const trips = this.trips;
-    // const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new NewFilters({
@@ -38,7 +35,6 @@ export default class FilterPresenter {
       render(this.#filterComponent, this.#filterContainer);
       return;
     }
-
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
   }

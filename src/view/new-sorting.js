@@ -42,7 +42,6 @@ export default class NewSorting extends AbstractView {
     this.#handleSortTypeChange = onSortTypeChange;
 
     this.element.addEventListener('click', this.#sortTypeChangeHandler);
-    // console.log(this.element)
   }
 
   get template() {
@@ -51,11 +50,8 @@ export default class NewSorting extends AbstractView {
 
   #sortTypeChangeHandler = (evt) => {
     if (evt.target.tagName !== 'LABEL') {
-      // console.log(evt.target)
       return;
     }
-
-    // evt.preventDefault();
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
 }

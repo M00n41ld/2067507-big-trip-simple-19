@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import NewDestination from '../view/destinations';
+import NewDestination from '../view/new-destinations';
 import EditForm from '../view/edit-form.js';
 import { UserAction, UpdateType } from '../const.js';
 
@@ -33,7 +33,6 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      // onDataChangeEdit: this.#handleDataChange,
       onDeleteClick: this.#handleDeleteClick,
     });
 
@@ -47,7 +46,8 @@ export default class TripPresenter {
       return;
     }
     if (this.#mode === Mode.EDITING) {
-      replace(this.#editTripComponent, prevTripEditComponent);
+      replace(this.#tripComponent, prevTripEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     if (this.#mode === Mode.DEFAULT) {
@@ -70,6 +70,41 @@ export default class TripPresenter {
     }
   }
 
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editTripComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editTripComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#tripComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editTripComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editTripComponent.shake(resetFormState);
+  }
+
   #replaceCardToForm() {
     replace(this.#editTripComponent, this.#tripComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -82,15 +117,6 @@ export default class TripPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   }
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.#editTripComponent.reset(this.#trip);
-      this.#replaceFormToCard();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-    }
-  };
 
   #handleEditClick = () => {
     this.#replaceCardToForm();
@@ -107,7 +133,6 @@ export default class TripPresenter {
       UpdateType.MINOR,
       update,
     );
-    this.#replaceFormToCard();
   };
 
   #handleDeleteClick = (update) => {
@@ -116,7 +141,15 @@ export default class TripPresenter {
       UpdateType.MINOR,
       update,
     );
-    // this.#replaceFormToCard();
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#editTripComponent.reset(this.#trip);
+      this.#replaceFormToCard();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
   };
 }
 

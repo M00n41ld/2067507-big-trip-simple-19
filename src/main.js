@@ -1,20 +1,22 @@
-import NewFilters from './view/filters';
-import { render } from './framework/render.js';
+import TripsApiService from './trips-api-service';
 import BoardPresenter from './presenter/board-presenter';
-import '../src/utils/common';
 import '../src/utils/trip';
-import '../src/mock/task';
 import TripModel from './model/trips-model';
 import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
 import NewTripButton from './view/new-trip-button';
+
+const AUTHORIZATION = 'Basic hk44wcl1sa2j';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 const filtersElement = document.querySelector('.trip-controls__filters');
 const mainElement = document.querySelector('.trip-events');
 const filterModel = new FilterModel();
 
-const tripModel = new TripModel();
+const tripModel = new TripModel({
+  tripsApiService: new TripsApiService(END_POINT, AUTHORIZATION)
+});
 const boardPresenter = new BoardPresenter({ listContainer: mainElement, tripModel, filterModel,
-  onNewTripDestroy: handleNewTripFormClose });
+  onNewTripDestroy: handleNewTripFormClose});
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersElement,
   filterModel,
@@ -32,7 +34,7 @@ function handleNewTripButtonClick() {
   boardPresenter.createTrip();
   newTripButtonComponent.element.disabled = true;
 }
-// render(newTripButtonComponent, filtersElement);
 
 filterPresenter.init();
 boardPresenter.init();
+tripModel.init();
