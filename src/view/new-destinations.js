@@ -9,7 +9,6 @@ const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createDestinationTemplate(trip) {
   const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType} = trip;
   const {name} = destinationPoint;
-
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
   const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
