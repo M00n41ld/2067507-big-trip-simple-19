@@ -4,11 +4,11 @@ import NewSorting from '../view/sorting';
 import { updateItem } from '../utils/common.js';
 import NewList from '../view/destinations-list';
 import { RenderPosition } from '../framework/render.js';
-// import NewForm from '../view/new-form';
+import NewForm from '../view/new-form';
 import { offersByType } from '../mock/task';
 import NoTrips from '../view/no-trip';
-import { SortType } from '../const.js';
-import { sortPriceDown, sortDayUp } from '../utils/trip.js';
+import EditForm from '../view/edit-form.js';
+
 
 export default class BoardPresenter {
 
@@ -94,6 +94,7 @@ console.log(this.#sourcedBoardTrips)
       default:
         this.#boardTrips.sort(sortDayUp);
         console.log(this.#boardTrips)
+
     }
     this.#currentSortType = sortType;
     console.log( this.#currentSortType )
