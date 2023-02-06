@@ -10,8 +10,7 @@ const Method = {
 export default class TripsApiService extends ApiService {
   get trips() {
     return this._load({url: 'points'})
-      // .then(ApiService.parseResponse);
-         .then(() => ([]));
+      .then(ApiService.parseResponse);
   }
 
   get destinations() {
