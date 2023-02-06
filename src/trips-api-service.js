@@ -18,6 +18,7 @@ export default class TripsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
+
   get offers() {
     return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
