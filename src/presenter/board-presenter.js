@@ -1,5 +1,5 @@
 import { remove, render } from '../framework/render.js';
-import TripPresenter from './destination-presenter.js';
+import TripPresenter from './trip-presenter.js';
 import NewSorting from '../view/new-sorting';
 import NewList from '../view/new-list';
 import { RenderPosition } from '../framework/render.js';
@@ -35,19 +35,22 @@ export default class BoardPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  #isNewEventOpened = null;
+  #isNewEventOpened = false;
 
-  constructor({ listContainer, tripModel, filterModel, onNewTripDestroy, newPointSave }) {
+  constructor({ listContainer, tripModel, filterModel, onNewTripDestroy }) {
     this.#listContainer = listContainer;
     this.#tripModel = tripModel;
-    this.#isNewEventOpened = newPointSave;
     this.#tripModel.addObserver(this.#handleModelEvent);
     this.#filterModel = filterModel;
     this.#newTripPresenter = new NewTripPresenter({
       tripListContainer: this.#listComponent.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewTripDestroy,
-      clearBoard : this.#clearBoard
+      onDestroy: () => {
+        onNewTripDestroy();
+        if (this.trips.length === 0) {
+          this.#renderBoard();
+        }
+      }
     });
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -105,6 +108,8 @@ export default class BoardPresenter {
     for (const trip of this.trips) {
       this.#renderTrip(trip);
     }
+
+    this.#isNewEventOpened = false;
   }
 
   #renderTrip(trip) {
@@ -160,16 +165,15 @@ export default class BoardPresenter {
         this.#tripPresenters.get(update.id).setSaving();
         try {
           await this.#tripModel.updateTrip(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#tripPresenters.get(update.id).setAborting();
         }
         break;
       case UserAction.ADD_TASK:
         this.#newTripPresenter.setSaving();
-        this.#isNewEventOpened = false;
         try {
           await this.#tripModel.addTrip(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#newTripPresenter.setAborting();
         }
         break;
@@ -177,7 +181,7 @@ export default class BoardPresenter {
         this.#tripPresenters.get(update.id).setDeleting();
         try {
           await this.#tripModel.deleteTrip(updateType, update);
-        } catch(err) {
+        } catch (err) {
           this.#tripPresenters.get(update.id).setAborting();
         }
         break;

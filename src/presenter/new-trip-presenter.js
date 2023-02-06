@@ -69,7 +69,7 @@ export default class NewTripPresenter {
   #handleFormSubmit = (trip) => {
     this.#handleDataChange(
       UserAction.ADD_TASK,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       trip,
     );
   };
