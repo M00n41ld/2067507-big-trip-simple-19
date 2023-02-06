@@ -3,6 +3,7 @@ import TripPresenter from './destination-presenter.js';
 import NewSorting from '../view/sorting';
 import NewList from '../view/destinations-list';
 import { RenderPosition } from '../framework/render.js';
+
 import { offersByType } from '../mock/task';
 import NoTrips from '../view/no-trip';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
@@ -121,9 +122,16 @@ export default class BoardPresenter {
       remove(this.#noTripsComponent);
     }
 
+
     //что дает
     if (resetFilterType) {
       this.#filterType = FilterType.EVERYTHING;
+
+
+        console.log(this.#boardTrips)
+
+
+
     }
   }
 

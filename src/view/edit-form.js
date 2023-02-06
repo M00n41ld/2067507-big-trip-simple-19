@@ -12,7 +12,7 @@ function createEditableTemplate(trip) {
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
 
-  const { offers } = offerByType;
+  const { offers} = offerByType;
 
   return (
 
@@ -29,6 +29,7 @@ function createEditableTemplate(trip) {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
+
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type.slice(0,1).toUpperCase().concat(offer.type.slice(1))}</label>
@@ -38,6 +39,7 @@ function createEditableTemplate(trip) {
         </div>
 
         <div class="event__field-group  event__field-group--destination">
+
           <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
             ${type}
           </label>
@@ -89,11 +91,13 @@ function createEditableTemplate(trip) {
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
 
+
           <div class="event__photos-container">
             <div class="event__photos-tape">
             ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
             </div>
           </div>
+
         </section>
       </section>
     </form>
@@ -103,9 +107,15 @@ function createEditableTemplate(trip) {
 
 export default class EditForm extends AbstractStatefulView {
   #handleFormSubmit = null;
+
   #datepickerStart = null;
   #datepickerEnd = null;
   #handleDataChange = null;
+
+  #trip = null;
+
+  // #allOffers = null;
+
   #handleEditCloseClick = null;
   #handleDeleteClick = null;
 
@@ -138,6 +148,7 @@ export default class EditForm extends AbstractStatefulView {
   }
 
   get template() {
+
     return createEditableTemplate(this._state);
   }
 
@@ -153,6 +164,10 @@ export default class EditForm extends AbstractStatefulView {
       this.#datepickerEnd.destroy();
       this.#datepickerEnd = null;
     }
+
+
+    return createEditableTemplate(this.#trip);
+
   }
 
   #priceHandler = (evt) => {
@@ -238,7 +253,14 @@ export default class EditForm extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditForm.parseStateToTrip(this._state));
+
+    this.#handleFormSubmit(this.#trip);
+    return createEditableTemplate(this.#trip, this.#allOffers);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
 
 
   };

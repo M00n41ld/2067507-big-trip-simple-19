@@ -15,7 +15,13 @@ function createNewFormTemplate(trip) {
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
+
   const { offers} = offerByType;
+  const copyAllOffers = allOffers;
+  const allOffersByType = allOffers.find((offer) => offer.type === type);
+
+  const { offers} = allOffersByType;
+
 
   return (
     `<li class="trip-events__item">
@@ -32,9 +38,12 @@ function createNewFormTemplate(trip) {
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
+
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+
               <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type.slice(0,1).toUpperCase().concat(offer.type.slice(1))}</label>
+
             </div>`)).join('')}
             </fieldset>
           </div>
