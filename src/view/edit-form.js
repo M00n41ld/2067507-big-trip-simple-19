@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import { humanizeDate } from '../utils/trip';
 import 'flatpickr/dist/flatpickr.min.css';
-import { dateFormats} from '../const';
+import { dateFormats } from '../const';
 
 function createEditableTemplate(trip) {
   const { isDisabled, isDeleting, isSaving, basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
@@ -11,7 +11,6 @@ function createEditableTemplate(trip) {
   const { offers } = offerByType;
 
   return (
-
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -27,7 +26,7 @@ function createEditableTemplate(trip) {
               <legend class="visually-hidden">Event type</legend>
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${trip.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}" ${trip.type.includes(offer.type) ? 'checked' : ''}>
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${trip.id}">${offer.type.slice(0,1).toUpperCase().concat(offer.type.slice(1))}</label>
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${trip.id}">${offer.type.slice(0, 1).toUpperCase().concat(offer.type.slice(1))}</label>
             </div>`)).join('')}
             </fieldset>
           </div>
@@ -194,10 +193,10 @@ export default class EditForm extends AbstractStatefulView {
   #priceHandler = (evt) => {
     const prevPrice = this._state.basePrice;
     const price = Number(evt.target.value);
-    if(!Number.isNaN(price)) {
-      this.updateElement({...this._state, basePrice: Math.round(price)});
+    if (!Number.isNaN(price)) {
+      this.updateElement({ ...this._state, basePrice: Math.round(price) });
     } else {
-      this.updateElement({...this._state, basePrice: prevPrice});
+      this.updateElement({ ...this._state, basePrice: prevPrice });
     }
   };
 

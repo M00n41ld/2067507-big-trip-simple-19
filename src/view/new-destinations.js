@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate} from '../utils/trip';
+import { humanizeDate } from '../utils/trip';
 
 const DATE_FORMAT_TIME = 'HH:mm';
 const DATE_FORMAT_DAY = 'DD MMM';
@@ -7,8 +7,8 @@ const DATE_FORMAT_DAY = 'DD MMM';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
 function createDestinationTemplate(trip) {
-  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType} = trip;
-  const {name} = destinationPoint;
+  const { basePrice, dateFrom, dateTo, type, destinationPoint, offerByType } = trip;
+  const { name } = destinationPoint;
   const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
   const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
@@ -16,7 +16,7 @@ function createDestinationTemplate(trip) {
   const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
   const checkedOffers = [];
-  function showChecked () {
+  function showChecked() {
     for (let i = 0; i < trip.offers.length; i++) {
       for (let j = 0; j < offerByType.offers.length; j++) {
         if (trip.offers[i] === offerByType.offers[j].id) {
@@ -62,11 +62,11 @@ function createDestinationTemplate(trip) {
   );
 }
 
-export default class NewDestination extends AbstractView{
+export default class NewDestination extends AbstractView {
   #trip = null;
   #handleEditClick = null;
 
-  constructor({trip, onEditClick}) {
+  constructor({ trip, onEditClick }) {
     super();
     this.#trip = trip;
     this.#handleEditClick = onEditClick;

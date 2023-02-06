@@ -14,7 +14,6 @@ export default class TripPresenter {
   #tripComponent = null;
   #editTripComponent = null;
   #handleModeChange = null;
-
   #trip = null;
   #mode = Mode.DEFAULT;
 

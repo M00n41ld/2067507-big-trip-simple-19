@@ -2,14 +2,12 @@ import { remove, render, RenderPosition } from '../framework/render';
 import { UserAction, UpdateType } from '../const';
 import NewForm from '../view/new-form';
 
-
 export default class NewTripPresenter {
   #tripListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
   #trip = null;
   #tripEditComponent = null;
-
 
   constructor({ tripListContainer, onDataChange, onDestroy}) {
     this.#tripListContainer = tripListContainer;

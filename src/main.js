@@ -1,6 +1,5 @@
 import TripsApiService from './trips-api-service';
 import BoardPresenter from './presenter/board-presenter';
-import '../src/utils/trip';
 import TripModel from './model/trips-model';
 import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
@@ -15,8 +14,10 @@ const filterModel = new FilterModel();
 const tripModel = new TripModel({
   tripsApiService: new TripsApiService(END_POINT, AUTHORIZATION)
 });
+
 const boardPresenter = new BoardPresenter({ listContainer: mainElement, tripModel, filterModel,
   onNewTripDestroy: handleNewTripFormClose});
+
 const filterPresenter = new FilterPresenter({
   filterContainer: filtersElement,
   filterModel,
@@ -26,6 +27,7 @@ const filterPresenter = new FilterPresenter({
 const newTripButtonComponent = new NewTripButton({
   onClick: handleNewTripButtonClick
 });
+
 function handleNewTripFormClose() {
   newTripButtonComponent.element.disabled = false;
 }

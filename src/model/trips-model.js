@@ -23,7 +23,7 @@ export default class TripModel extends Observable {
 
   get trip() {
     return this.#trips.map((trip) => {
-      const destinationPoint = this.#destinations.find((point) => point.id === trip.destination) ;
+      const destinationPoint = this.#destinations.find((point) => point.id === trip.destination);
       const offerByType = this.#offersByType.find((offer) => offer.type === trip.type);
       const offersByType = this.#offersByType;
       const destinationsList = this.#destinations;
@@ -54,12 +54,12 @@ export default class TripModel extends Observable {
 
   #getOfferByType = (trip) => {
     const offerByType = this.#offersByType.find((offer) => offer.type === trip.type);
-    return {offerByType};
+    return { offerByType };
   };
 
   #getDestinationPoint = (trip) => {
     const destinationPoint = this.#destinations.find((point) => point.id === trip.destination);
-    return {destinationPoint};
+    return { destinationPoint };
   };
 
   async init() {
