@@ -10,8 +10,7 @@ const Method = {
 export default class TripsApiService extends ApiService {
   get trips() {
     return this._load({url: 'points'})
-      // .then(ApiService.parseResponse);
-         .then(() => ([]));
+      .then(ApiService.parseResponse);
   }
 
   get destinations() {
@@ -63,7 +62,6 @@ export default class TripsApiService extends ApiService {
       'base_price': trip.basePrice,
       'date_to': trip.dateTo.toISOString(),
     };
-
     delete adaptedTrip.dateFrom;
     delete adaptedTrip.dateTo;
     delete adaptedTrip.basePrice;
@@ -71,7 +69,6 @@ export default class TripsApiService extends ApiService {
     delete adaptedTrip.offerByType;
     delete adaptedTrip.destinationPoint;
     delete adaptedTrip.destinationsList;
-
     return adaptedTrip;
   }
 }
