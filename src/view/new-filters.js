@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 import { FilterType } from '../const';
+
 function createFiltersTemplate(trips, currentFilterType) {
   const timeNow = Date.now();
   const filters = Object.values(FilterType);
@@ -26,7 +27,7 @@ export default class NewFilters extends AbstractView {
   #currentFilter = null;
   #handleFilterTypeChange = null;
 
-  constructor({trips, currentFilterType, onFilterTypeChange }) {
+  constructor({ trips, currentFilterType, onFilterTypeChange }) {
     super();
     this.#currentFilter = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;

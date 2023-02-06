@@ -16,7 +16,6 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-
 export default class BoardPresenter {
   #listContainer = null;
   #tripModel = null;

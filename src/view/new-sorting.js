@@ -40,7 +40,6 @@ export default class NewSorting extends AbstractView {
     super();
     this.#currentSortType = currentSortType;
     this.#handleSortTypeChange = onSortTypeChange;
-
     this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
 
