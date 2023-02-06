@@ -33,15 +33,14 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      // onCheckboxClick: this.#handleCheckedClick,
+      onDataChangeEdit: this.#handleDataChange,
     });
 
     this.#tripComponent = new NewDestination({
       trip: this.#trip,
       onEditClick: this.#handleEditClick,
     });
-    //непонятно как это работает
-    // render(this.#tripComponent, this.#tripListContainer);
+
     if (prevTripComponent === null || prevTripEditComponent === null) {
       render(this.#tripComponent, this.#tripListContainer);
       return;
@@ -65,6 +64,7 @@ export default class TripPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editTripComponent.reset(this.#trip)
       this.#replaceFormToCard();
     }
   }
@@ -74,46 +74,38 @@ export default class TripPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
-    console.log(this.#mode)
   }
 
   #replaceFormToCard() {
     replace(this.#tripComponent, this.#editTripComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
-    // console.log(this.#mode)
   }
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#editTripComponent.reset(this.#trip);
       this.#replaceFormToCard();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
 
-  // #handleCheckedClick = (test) => {
-  //   // console.log(this.#handleCheckedClick)
-  //   // console.log(test.querySelector('input').checked);
-  //   if (test.querySelector('input').checked) {
-  //     const fullId = test.querySelector('input').id;
-  //     const idCropped = fullId.slice(fullId.length - 1);
-  //     this.#trip.checkedOffers.push(this.#trip.offerByType.offers[idCropped - 1]);
-  //     this.#handleDataChange({...this.#trip});
-  //   }
-  // };
 
   #handleEditClick = () => {
     this.#replaceCardToForm();
   };
 
   #handleEditCloseClick = () => {
+    this.#editTripComponent.reset(this.#trip);
     this.#replaceFormToCard();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFormSubmit = (trip) => {
-    // console.log(this.#handleDataChange)
     this.#handleDataChange(trip);
     this.#replaceFormToCard();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 }
 

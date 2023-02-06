@@ -1,14 +1,20 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import flatpickr from 'flatpickr';
 import { humanizeDate } from '../utils/trip';
+import 'flatpickr/dist/flatpickr.min.css';
+import { debounce } from '../utils/common';
 
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 function createEditableTemplate(trip) {
-  const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
-  const {name, description, pictures} = destinationPoint;
+
+  const { basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
+  const { name, description, pictures } = destinationPoint;
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
+  console.log(trip);
 
   const { offers} = offerByType;
+
   return (
 
     `<li class="trip-events__item">
@@ -105,40 +111,143 @@ function createEditableTemplate(trip) {
   );
 }
 
-export default class EditForm extends AbstractView {
+export default class EditForm extends AbstractStatefulView {
   #handleFormSubmit = null;
+
+  #datepickerStart = null;
+  #datepickerEnd = null;
+  #handleDataChange = null;
+
   #trip = null;
 
   // #allOffers = null;
+
   #handleEditCloseClick = null;
   // #handleCheckedClick = null;
 
-  constructor({trip, onFormSubmit, onEditCloseClick}) {
+  constructor({ trip, onFormSubmit, onEditCloseClick, onDataChangeEdit }) {
     super();
-    this.#trip = trip;
-    // this.#allOffers = allOffers;
+    this._setState(EditForm.parseTripToState(trip));
+
+    this.#handleDataChange = onDataChangeEdit;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditCloseClick = onEditCloseClick;
     // this.#handleCheckedClick = onCheckboxClick;
-    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    this._restoreHandlers();
+  }
+
+  reset(trip) {
+    this.updateElement(
+      EditForm.parseTripToState(trip)
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
     // console.log( this.element.querySelector('.event__available-offers'))
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editCloseHandler);
+
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeDestinationHandler);
+    this.#setDatePickerFrom();
+    this.#setDatePickerTo();
   }
 
   get template() {
 
-    return createEditableTemplate(this.#trip);
+    return createEditableTemplate(this._state);
   }
 
-  // #addCheckedHandler = (evt) => {
-  //   const test = evt.target.closest('.event__offer-selector');
-  //   this.#handleCheckedClick(test);
-  // };
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerStart) {
+      this.#datepickerStart.destroy();
+      this.#datepickerStart = null;
+    }
+
+    if (this.#datepickerEnd) {
+      this.#datepickerEnd.destroy();
+      this.#datepickerEnd = null;
+    }
+
+
+    return createEditableTemplate(this.#trip);
+
+  }
+
+
+  #dateChangeHandlerFrom = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+
+  };
+
+  #dateChangeHandlerTo = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+
+  };
+
+  #setDatePickerFrom() {
+    this.#datepickerStart = flatpickr(this.element.querySelector('[name=event-start-time]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        enableTime: true,
+        defaultDate: this._state.dateFrom,
+        time_24hr: true,
+        onClose: this.#dateChangeHandlerFrom,
+      },);
+  }
+
+
+  #setDatePickerTo() {
+    this.#datepickerEnd = flatpickr(this.element.querySelector('[name=event-end-time]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        enableTime: true,
+        time_24hr: true,
+        defaultDate: this._state.dateTo,
+        onClose: this.#dateChangeHandlerTo,
+      },);
+  }
+
+  #changeTypeHandler = (evt) => {
+    const value = evt.target.closest('.event__type-input').value;
+    this._state.type = value;
+    const newOfferByType = this._state.offersByType.find((offer) => offer.type === value);
+
+    this.updateElement({
+      type: value,
+      offerByType: newOfferByType,
+      offers: []
+    });
+  };
+
+  #changeDestinationHandler = (evt) => {
+    const value = evt.target.value;
+    const newDestination = this._state.destinationsList.find((point) => point.name === value);
+
+    this.updateElement({
+      destination: newDestination.id,
+      destinationPoint: newDestination
+    });
+
+  };
+
+  #addCheckedHandler = (evt) => {
+    const test = evt.target.closest('.event__offer-selector');
+    this.#handleCheckedClick(test);
+
+  };
+
 
   #formSubmitHandler = (evt) => {
-    // console.log('click');
     evt.preventDefault();
+
     this.#handleFormSubmit(this.#trip);
     return createEditableTemplate(this.#trip, this.#allOffers);
   }
@@ -151,5 +260,38 @@ export default class EditForm extends AbstractView {
 
   #editCloseHandler = () => {
     this.#handleEditCloseClick();
+  };
+
+  static parseTripToState(trip) {
+    return {
+      ...trip
+    };
+  }
+
+  static parseStateToTrip(state) {
+    const trip = { ...state };
+    return trip;
+  }
+
+
+  #handleCheckedClick = (test) => {
+    const fullId = test.querySelector('input').id;
+    const idCropped = fullId.slice(fullId.length - 1);
+    if (test.querySelector('input').checked) {
+      this._state.offers.push(this._state.offerByType.offers[idCropped - 1].id);
+      this._state.offers.sort((a, b) => a - b);
+     this.updateElement({
+      ...this._state
+    });
+    }
+    else {
+      const newOffers = this._state.offers.filter((element) => element !== Number(idCropped));
+      this._state.offers = newOffers;
+      this._state.offers.sort((a, b) => a - b);
+      this.updateElement({
+        ...this._state
+      });
+    }
+
   };
 }
