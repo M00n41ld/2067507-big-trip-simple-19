@@ -1,13 +1,17 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import flatpickr from 'flatpickr';
 import { humanizeDate } from '../utils/trip';
-
-
+import 'flatpickr/dist/flatpickr.min.css';
+import { defaultPoint } from '../const';
 const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
 
 function createNewFormTemplate(trip) {
+  console.log('trip');
+  // console.log(trip);
+
   const {basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList} = trip;
-  const {name, description, pictures} = destinationPoint;
-  // const {src} = pictures[0];
+  const { name, description, pictures } = destinationPoint;
+
   const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
   const dateToHum = humanizeDate(dateTo, DATE_FORMAT);
 
@@ -37,11 +41,8 @@ function createNewFormTemplate(trip) {
 
               ${offersByType.map((offer) => (`<div class="event__type-item">
               <input id="event-type-${offer.type}-${destinationPoint.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type}</label>
 
-              ${copyAllOffers.map((offer) => (`<div class="event__type-item">
-              <input id="event-type-${offer.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
-              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-1">${offer.type}</label>
+              <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${destinationPoint.id}">${offer.type.slice(0,1).toUpperCase().concat(offer.type.slice(1))}</label>
 
             </div>`)).join('')}
             </fieldset>
@@ -109,27 +110,169 @@ function createNewFormTemplate(trip) {
   );
 }
 
-export default class NewForm extends AbstractView {
+export default class NewForm extends AbstractStatefulView {
   #handleFormSubmit = null;
-  #trip = null;
-  // #allOffers = null;
+  #handleDeleteClick = null;
+  #defaultTrip = null;
+  #datepickerStart = null;
+  #datepickerEnd = null;
 
 
-  constructor({trip, onFormSubmit}) {
+  constructor({trip = defaultPoint, onFormSubmit, onDeleteClick}) {
     super();
-    this.#trip = trip;
-    // this.#allOffers = allOffers;
+    this._setState(NewForm.parseTripToState(trip));
+    // this.#defaultTrip = trip;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
 
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#addCheckedHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#changeTypeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#changeDestinationHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceHandler);
+    this.#setDatePickerFrom();
+    this.#setDatePickerTo();
   }
 
   get template() {
-    return createNewFormTemplate(this.#trip);
+    return createNewFormTemplate(this._state);
   }
+
+  #priceHandler = (evt) => {
+    const prevPrice = this._state.basePrice;
+    if (evt.target.value.match(/^\d+$/)) {
+      this._state.basePrice = evt.target.value;
+      this._setState(this._state.basePrice);
+    }
+    else {
+      evt.target.value = prevPrice;
+    }
+  };
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerStart) {
+      this.#datepickerStart.destroy();
+      this.#datepickerStart = null;
+    }
+
+    if (this.#datepickerEnd) {
+      this.#datepickerEnd.destroy();
+      this.#datepickerEnd = null;
+    }
+  }
+
+  #dateChangeHandlerFrom = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+
+  };
+
+  #dateChangeHandlerTo = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+  #setDatePickerFrom() {
+    this.#datepickerStart = flatpickr(this.element.querySelector('[name=event-start-time]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        enableTime: true,
+        defaultDate: this._state.dateFrom,
+        time_24hr: true,
+        onClose: this.#dateChangeHandlerFrom,
+      },);
+  }
+
+  #setDatePickerTo() {
+    this.#datepickerEnd = flatpickr(this.element.querySelector('[name=event-end-time]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        enableTime: true,
+        time_24hr: true,
+        minDate: this._state.dateFrom,
+        defaultDate: this._state.dateTo,
+        onClose: this.#dateChangeHandlerTo,
+      },);
+  }
+
+  #changeTypeHandler = (evt) => {
+    const value = evt.target.closest('.event__type-input').value;
+    this._state.type = value;
+    const newOfferByType = this._state.offersByType.find((offer) => offer.type === value);
+    this.updateElement({
+      type: value,
+      offerByType: newOfferByType,
+      offers: []
+    });
+
+  };
+
+  #changeDestinationHandler = (evt) => {
+    const value = evt.target.value;
+    const newDestination = this._state.destinationsList.find((point) => point.name === value);
+    if (newDestination === undefined) {
+      return;
+    }
+    this.updateElement({
+      destination: newDestination.id,
+      destinationPoint: newDestination
+    });
+  };
+
+  #addCheckedHandler = (evt) => {
+    const test = evt.target.closest('.event__offer-selector');
+    this.#handleCheckedClick(test);
+  };
+
+  #formDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(NewForm.parseStateToTrip(this._state));
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    debugger
+    this.#handleFormSubmit(NewForm.parseStateToTrip(this._state));
+  };
+
+  static parseTripToState(trip) {
+    return {
+      ...trip
+    };
+  }
+
+  static parseStateToTrip(state) {
+    const trip = { ...state };
+    return trip;
+  }
+
+  #handleCheckedClick = (test) => {
+    const fullId = test.querySelector('input').id;
+    const idCropped = fullId.slice(fullId.length - 1);
+    if (test.querySelector('input').checked) {
+      this._state.offers.push(this._state.offerByType.offers[idCropped - 1].id);
+      this._state.offers.sort((a, b) => a - b);
+      this.updateElement({
+        ...this._state
+      });
+    }
+    else {
+      const newOffers = this._state.offers.filter((element) => element !== Number(idCropped));
+      this._state.offers = newOffers;
+      this._state.offers.sort((a, b) => a - b);
+      this.updateElement({
+        ...this._state
+      });
+    }
+
   };
 }

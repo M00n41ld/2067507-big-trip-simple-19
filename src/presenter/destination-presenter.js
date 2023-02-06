@@ -1,6 +1,7 @@
-import {render, replace, remove} from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import NewDestination from '../view/destinations';
 import EditForm from '../view/edit-form.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -17,12 +18,11 @@ export default class TripPresenter {
   #trip = null;
   #mode = Mode.DEFAULT;
 
-  constructor({tripListContainer, onDataChange, onModeChange}) {
+  constructor({ tripListContainer, onDataChange, onModeChange }) {
     this.#tripListContainer = tripListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
-
 
   init(trip) {
     this.#trip = trip;
@@ -33,7 +33,8 @@ export default class TripPresenter {
       trip: this.#trip,
       onFormSubmit: this.#handleFormSubmit,
       onEditCloseClick: this.#handleEditCloseClick,
-      onDataChangeEdit: this.#handleDataChange,
+      // onDataChangeEdit: this.#handleDataChange,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     this.#tripComponent = new NewDestination({
@@ -64,7 +65,7 @@ export default class TripPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#editTripComponent.reset(this.#trip)
+      this.#editTripComponent.reset(this.#trip);
       this.#replaceFormToCard();
     }
   }
@@ -78,7 +79,7 @@ export default class TripPresenter {
 
   #replaceFormToCard() {
     replace(this.#tripComponent, this.#editTripComponent);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   }
 
@@ -91,7 +92,6 @@ export default class TripPresenter {
     }
   };
 
-
   #handleEditClick = () => {
     this.#replaceCardToForm();
   };
@@ -99,13 +99,24 @@ export default class TripPresenter {
   #handleEditCloseClick = () => {
     this.#editTripComponent.reset(this.#trip);
     this.#replaceFormToCard();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = (trip) => {
-    this.#handleDataChange(trip);
+  #handleFormSubmit = (update) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      update,
+    );
     this.#replaceFormToCard();
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleDeleteClick = (update) => {
+    this.#handleDataChange(
+      UserAction.DELETE_TASK,
+      UpdateType.MINOR,
+      update,
+    );
+    // this.#replaceFormToCard();
   };
 }
 

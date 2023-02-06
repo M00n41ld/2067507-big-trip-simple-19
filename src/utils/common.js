@@ -2,10 +2,6 @@ function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
-
 const getRandomPositiveInteger = (a, b) => {
   if (a < 0 || b < 0) {
     return NaN;
@@ -20,4 +16,4 @@ const getRandomPositiveInteger = (a, b) => {
 };
 
 
-export {getRandomArrayElement, getRandomPositiveInteger, updateItem};
+export {getRandomArrayElement, getRandomPositiveInteger,};
