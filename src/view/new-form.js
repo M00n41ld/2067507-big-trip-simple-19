@@ -35,7 +35,7 @@ function createNewFormTemplate(trip) {
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id ? destinationPoint.id : TRIP_ID}">
+          <label class="event__label  event__type-output" for="event-destination-${trip.id ? trip.id : TRIP_ID}">
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${trip.id ? trip.id : TRIP_ID}" type="text" name="event-destination" value="${destinationPoint.name ? destinationPoint.name : ''}" list="destination-list-${trip.id ? trip.id : TRIP_ID}" ${isDisabled ? 'disabled' : ''}>

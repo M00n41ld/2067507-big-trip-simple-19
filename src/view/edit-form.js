@@ -33,11 +33,11 @@ function createEditableTemplate(trip) {
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-${destinationPoint.id}">
+          <label class="event__label  event__type-output" for="event-destination-${trip.id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${destinationPoint.id}" type="text" name="event-destination" value="${destinationPoint.name}" list="destination-list-${destinationPoint.id}" ${isDisabled ? 'disabled' : ''}>
-          <datalist id="destination-list-${destinationPoint.id}">
+          <input class="event__input  event__input--destination" id="event-destination-${trip.id}" type="text" name="event-destination" value="${destinationPoint.name ? destinationPoint.name : ''}" list="destination-list-${trip.id}" ${isDisabled ? 'disabled' : ''}>
+          <datalist id="destination-list-${trip.id}">
           ${destinationsList.map((point) => (`<option value="${point.name}">${point.name}</option>`)).join('')}
           </datalist>
         </div>
