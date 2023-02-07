@@ -1,6 +1,6 @@
 import TripsApiService from './trips-api-service';
 import BoardPresenter from './presenter/board-presenter';
-import TripModel from './model/trips-model';
+import TripModel from './model/trip-model';
 import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
 import NewTripButton from './view/new-trip-button';

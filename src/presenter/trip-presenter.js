@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import NewDestination from '../view/new-destinations';
+import NewDestination from '../view/new-destination';
 import EditForm from '../view/edit-form.js';
 import { UserAction, UpdateType } from '../const.js';
 

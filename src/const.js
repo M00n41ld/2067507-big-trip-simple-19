@@ -22,10 +22,10 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-const dateFormats = {
-  DATE_FORMAT: 'DD/MM/YYYY HH:mm',
-  DATE_FORMAT_TIME: 'HH:mm',
-  DATE_FORMAT_FORMS: 'DD/MM/YYYY HH:mm',
+const DateFormat = {
+  DAY: 'MMM DD',
+  TIME: 'HH:mm',
+  FORMS: 'DD/MM/YYYY HH:mm',
 };
 
-export {SortType, UserAction, UpdateType, FilterType, dateFormats};
+export {SortType, UserAction, UpdateType, FilterType, DateFormat};
