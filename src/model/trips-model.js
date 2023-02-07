@@ -40,11 +40,13 @@ export default class TripModel extends Observable {
   get defaultTrip() {
     const offerByType = this.#getOfferByType(DEFAULT_POINT).offerByType;
     const offersByType = this.#offersByType;
-    const destinationPoint = this.#getDestinationPoint(DEFAULT_POINT).destination ? this.#getDestinationPoint(DEFAULT_POINT).destination : '';
+    const destinationPoint = 0;
+    const destination = this.#getDestinationPoint(DEFAULT_POINT).destination ? this.#getDestinationPoint(DEFAULT_POINT).destination : '';
     const destinationsList = this.#destinations;
 
     return {
       ...this.#adaptToClient(DEFAULT_POINT),
+      destination,
       offerByType,
       offersByType,
       destinationPoint,

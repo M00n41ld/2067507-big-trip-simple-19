@@ -5,7 +5,7 @@ import FilterModel from './model/filter-model';
 import FilterPresenter from './presenter/filter-presenter';
 import NewTripButton from './view/new-trip-button';
 
-const AUTHORIZATION = 'Basic hk44wcl1sa2j';
+const AUTHORIZATION = 'Basic hk444wcl1sa2j';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 const filtersElement = document.querySelector('.trip-controls__filters');
 const mainElement = document.querySelector('.trip-events');
