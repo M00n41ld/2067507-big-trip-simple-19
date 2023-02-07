@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import { FilterType } from '../const';
-import { dateFormats } from '../const';
+import { DateFormat } from '../const';
 function humanizeTaskDueDate(dueDate) {
-  return dueDate ? dayjs(dueDate).format(dateFormats.DATE_FORMAT) : '';
+  return dueDate ? dayjs(dueDate).format(DateFormat.FORMS) : '';
 }
 
 function humanizeTaskDueTime(dueDate) {
-  return dueDate ? dayjs(dueDate).format(dateFormats.DATE_FORMAT_TIME) : '';
+  return dueDate ? dayjs(dueDate).format(DateFormat.TIME) : '';
 }
 
 function humanizeDate(date, formatData) {

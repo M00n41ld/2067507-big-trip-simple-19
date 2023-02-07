@@ -1,19 +1,15 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate } from '../utils/trip';
-
-const DATE_FORMAT_TIME = 'HH:mm';
-const DATE_FORMAT_DAY = 'DD MMM';
-
-const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
+import { DateFormat } from '../const.js';
 
 function createDestinationTemplate(trip) {
   const { basePrice, dateFrom, dateTo, type, destinationPoint, offerByType } = trip;
   const { name } = destinationPoint;
-  const timeFromHum = humanizeDate(dateFrom, DATE_FORMAT_TIME);
-  const timeToHum = humanizeDate(dateTo, DATE_FORMAT_TIME);
-  const dateFromHum = humanizeDate(dateFrom, DATE_FORMAT_DAY);
-  const fullDateFromHum = humanizeDate(dateFrom, DATE_FORMAT);
-  const fullDateToHum = humanizeDate(dateTo, DATE_FORMAT);
+  const timeFromHum = humanizeDate(dateFrom, DateFormat.TIME);
+  const timeToHum = humanizeDate(dateTo, DateFormat.TIME);
+  const dateFromHum = humanizeDate(dateFrom, DateFormat.DAY);
+  const fullDateFromHum = humanizeDate(dateFrom, DateFormat.FORMS);
+  const fullDateToHum = humanizeDate(dateTo, DateFormat.FORMS);
 
   const checkedOffers = [];
   function showChecked() {

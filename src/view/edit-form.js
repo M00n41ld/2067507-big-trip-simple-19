@@ -2,12 +2,12 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import { humanizeDate } from '../utils/trip';
 import 'flatpickr/dist/flatpickr.min.css';
-import { dateFormats } from '../const';
+import { DateFormat } from '../const';
 
 function createEditableTemplate(trip) {
   const { isDisabled, isDeleting, isSaving, basePrice, dateFrom, dateTo, type, destinationPoint, offerByType, offersByType, destinationsList } = trip;
-  const dateFromHum = humanizeDate(dateFrom, dateFormats.DATE_FORMAT_FORMS);
-  const dateToHum = humanizeDate(dateTo, dateFormats.DATE_FORMAT_FORMS);
+  const dateFromHum = humanizeDate(dateFrom, DateFormat.FORMS);
+  const dateToHum = humanizeDate(dateTo, DateFormat.FORMS);
   const { offers } = offerByType;
 
   return (
@@ -193,11 +193,7 @@ export default class EditForm extends AbstractStatefulView {
   #priceHandler = (evt) => {
     const prevPrice = this._state.basePrice;
     const price = Number(evt.target.value);
-    if (!Number.isNaN(price)) {
-      this.updateElement({ ...this._state, basePrice: Math.round(price) });
-    } else {
-      this.updateElement({ ...this._state, basePrice: prevPrice });
-    }
+    this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : prevPrice});
   };
 
   #dateChangeHandlerFrom = ([userDate]) => {

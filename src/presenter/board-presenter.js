@@ -3,7 +3,7 @@ import TripPresenter from './trip-presenter.js';
 import NewSorting from '../view/new-sorting';
 import NewList from '../view/new-list';
 import { RenderPosition } from '../framework/render.js';
-import NoTrips from '../view/no-trip';
+import NoTrips from '../view/no-trips';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { doSortPriceDown, doSortDayUp } from '../utils/trip.js';
 import { filter } from '../utils/trip.js';
